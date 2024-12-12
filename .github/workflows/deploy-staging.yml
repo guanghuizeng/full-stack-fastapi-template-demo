@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -12,6 +13,7 @@ jobs:
     runs-on:
       - self-hosted
       - staging
+    environment: staging
     env:
       ENVIRONMENT: staging
       DOMAIN: ${{ secrets.DOMAIN_STAGING }}
@@ -26,7 +28,25 @@ jobs:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
     steps:
+      - name: Check Environment Variables
+        run: |
+          echo "Checking environment variables (showing only lengths and patterns):"
+          echo "DOMAIN length: ${#DOMAIN}"
+          echo "DOMAIN pattern: $(echo $DOMAIN | sed 's/[^.]//g')"
+          echo "STACK_NAME length: ${#STACK_NAME}"
+          echo "SECRET_KEY length: ${#SECRET_KEY}"
+          echo "FIRST_SUPERUSER pattern: $(echo $FIRST_SUPERUSER | grep -o '@' | wc -l) @ symbols"
+          echo "FIRST_SUPERUSER_PASSWORD length: ${#FIRST_SUPERUSER_PASSWORD}"
+          echo "SMTP_HOST length: ${#SMTP_HOST}"
+          echo "SMTP_USER length: ${#SMTP_USER}"
+          echo "SMTP_PASSWORD length: ${#SMTP_PASSWORD}"
+          echo "EMAILS_FROM_EMAIL pattern: $(echo $EMAILS_FROM_EMAIL | grep -o '@' | wc -l) @ symbols"
+          echo "POSTGRES_PASSWORD length: ${#POSTGRES_PASSWORD}"
       - name: Checkout
         uses: actions/checkout@v4
-      - run: docker compose -f docker-compose.yml --project-name ${{ secrets.STACK_NAME_STAGING }} build
-      - run: docker compose -f docker-compose.yml --project-name ${{ secrets.STACK_NAME_STAGING }} up -d
+      - name: Build and Deploy
+        run: |
+          echo "Domain pattern check: $(echo $DOMAIN | grep -E '^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' && echo 'valid' || echo 'invalid')"
+          echo "Email pattern check: $(echo $FIRST_SUPERUSER | grep -E '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' && echo 'valid' || echo 'invalid')"
+          docker compose -f docker-compose.yml --project-name "$STACK_NAME" build
+          docker compose -f docker-compose.yml --project-name "$STACK_NAME" up -d
