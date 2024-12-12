@@ -17,6 +17,8 @@ jobs:
     env:
       ENVIRONMENT: staging
       DOMAIN: ${{ secrets.DOMAIN_STAGING }}
+      FRONTEND_HOST: ${{ secrets.FRONTEND_HOST }}
+      BACKEND_CORS_ORIGINS: ${{ secrets.BACKEND_CORS_ORIGINS }}
       STACK_NAME: ${{ secrets.STACK_NAME_STAGING }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       FIRST_SUPERUSER: ${{ secrets.FIRST_SUPERUSER }}
@@ -32,6 +34,7 @@ jobs:
         run: |
           echo "Checking environment variables (showing only lengths and patterns):"
           echo "DOMAIN length: ${#DOMAIN}"
+          echo "BACKEND_CORS_ORIGINS length: ${#BACKEND_CORS_ORIGINS}"
           echo "DOMAIN pattern: $(echo $DOMAIN | sed 's/[^.]//g')"
           echo "STACK_NAME length: ${#STACK_NAME}"
           echo "SECRET_KEY length: ${#SECRET_KEY}"
