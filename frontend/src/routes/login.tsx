@@ -133,7 +133,7 @@ function Login() {
           Log In
         </Button>
         <Text>
-          Don't have an account?{" "}
+          Don't have an account yet?{" "}
           <Link as={RouterLink} to="/signup" color="blue.500">
             Sign up
           </Link>
