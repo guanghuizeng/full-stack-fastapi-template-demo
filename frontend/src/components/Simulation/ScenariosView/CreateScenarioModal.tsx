@@ -17,6 +17,7 @@ import {
   useToast,
 } from "@chakra-ui/react"
 import { useScenarios, type ScenarioTemplate } from "../../../hooks/useScenarios"
+import { useI18n } from "../../../hooks/useI18n"
 
 interface CreateScenarioModalProps {
   isOpen: boolean
@@ -29,6 +30,7 @@ export default function CreateScenarioModal({
   onClose,
   selectedTemplate,
 }: CreateScenarioModalProps) {
+  const { t } = useI18n()
   const toast = useToast()
   const { createInstance, isCreating } = useScenarios()
   const [formData, setFormData] = useState({
@@ -46,8 +48,8 @@ export default function CreateScenarioModal({
           data: formData,
         })
         toast({
-          title: "Scenario created",
-          description: "Your new scenario has been created successfully.",
+          title: t('common.success'),
+          description: t('simulation.scenarios.createSuccess'),
           status: "success",
           duration: 5000,
           isClosable: true,
@@ -56,8 +58,8 @@ export default function CreateScenarioModal({
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create scenario. Please try again.",
+        title: t('common.error'),
+        description: t('simulation.scenarios.createError'),
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -70,26 +72,28 @@ export default function CreateScenarioModal({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          Create New Scenario
-          {selectedTemplate && ` from ${selectedTemplate.name}`}
+          {selectedTemplate 
+            ? t('simulation.scenarios.createFromTemplate', { name: selectedTemplate.name })
+            : t('simulation.scenarios.createScenario')
+          }
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <form onSubmit={handleSubmit}>
             <VStack spacing={4}>
               <FormControl isRequired>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t('simulation.scenarios.name')}</FormLabel>
                 <Input
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  placeholder="Enter scenario name"
+                  placeholder={t('simulation.scenarios.namePlaceholder')}
                 />
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Type</FormLabel>
+                <FormLabel>{t('simulation.scenarios.type')}</FormLabel>
                 <Select
                   value={formData.type}
                   onChange={(e) =>
@@ -97,34 +101,34 @@ export default function CreateScenarioModal({
                   }
                   isDisabled={!!selectedTemplate}
                 >
-                  <option value="chat">Chat</option>
-                  <option value="task">Task</option>
-                  <option value="decision">Decision</option>
-                  <option value="collaboration">Collaboration</option>
+                  <option value="chat">{t('simulation.scenarios.types.chat')}</option>
+                  <option value="task">{t('simulation.scenarios.types.task')}</option>
+                  <option value="decision">{t('simulation.scenarios.types.decision')}</option>
+                  <option value="collaboration">{t('simulation.scenarios.types.collaboration')}</option>
                 </Select>
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>{t('simulation.scenarios.description')}</FormLabel>
                 <Textarea
                   value={formData.description}
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  placeholder="Enter scenario description"
+                  placeholder={t('simulation.scenarios.descriptionPlaceholder')}
                 />
               </FormControl>
 
               <HStack spacing={2} width="100%" justify="flex-end">
                 <Button variant="ghost" onClick={onClose}>
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"
                   colorScheme="blue"
                   isLoading={isCreating}
                 >
-                  Create
+                  {t('common.create')}
                 </Button>
               </HStack>
             </VStack>

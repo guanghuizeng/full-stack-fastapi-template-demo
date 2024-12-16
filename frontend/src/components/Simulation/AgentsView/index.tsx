@@ -30,8 +30,10 @@ import {
 } from "@chakra-ui/react"
 import { FiFilter, FiPlus } from "react-icons/fi"
 import { useAgents, type Agent } from "../../../hooks/useAgents"
+import { useI18n } from "../../../hooks/useI18n"
 
 function AgentCard({ agent, onEdit }: { agent: Agent; onEdit: (agent: Agent) => void }) {
+  const { t } = useI18n()
   const bg = useColorModeValue("white", "gray.800")
   const borderColor = useColorModeValue("gray.200", "gray.700")
 
@@ -69,9 +71,9 @@ function AgentCard({ agent, onEdit }: { agent: Agent; onEdit: (agent: Agent) => 
 
       <HStack spacing={2}>
         <Tag colorScheme={agent.status === "active" ? "green" : agent.status === "ready" ? "blue" : "orange"}>
-          {agent.status}
+          {t(`simulation.agents.status.${agent.status}`)}
         </Tag>
-        <Tag colorScheme="gray">{agent.experience}</Tag>
+        <Tag colorScheme="gray">{t(`simulation.agents.experience`)}: {agent.experience}</Tag>
       </HStack>
 
       <HStack spacing={2} mt={4}>
@@ -82,14 +84,14 @@ function AgentCard({ agent, onEdit }: { agent: Agent; onEdit: (agent: Agent) => 
             // Handle train/deploy agent
           }}
         >
-          {agent.status === "training" ? "Train" : "Deploy"}
+          {agent.status === "training" ? t('simulation.agents.train') : t('simulation.agents.deploy')}
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={() => onEdit(agent)}
         >
-          Edit
+          {t('common.edit')}
         </Button>
       </HStack>
     </Box>
@@ -101,6 +103,7 @@ function AgentForm({ agent, onSubmit, onClose }: {
   onSubmit: (data: Partial<Agent>) => void
   onClose: () => void 
 }) {
+  const { t } = useI18n()
   const [formData, setFormData] = useState(agent || {
     name: "",
     type: "persona",
@@ -120,58 +123,61 @@ function AgentForm({ agent, onSubmit, onClose }: {
     <form onSubmit={handleSubmit}>
       <VStack spacing={4}>
         <FormControl isRequired>
-          <FormLabel>Name</FormLabel>
+          <FormLabel>{t('simulation.agents.name')}</FormLabel>
           <Input
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder={t('simulation.agents.namePlaceholder')}
           />
         </FormControl>
 
         <FormControl isRequired>
-          <FormLabel>Type</FormLabel>
+          <FormLabel>{t('simulation.agents.type')}</FormLabel>
           <Select
             value={formData.type}
             onChange={(e) => setFormData({ ...formData, type: e.target.value as Agent["type"] })}
           >
-            <option value="persona">Persona</option>
-            <option value="service">Service</option>
-            <option value="analyst">Analyst</option>
+            <option value="persona">{t('simulation.agents.types.persona')}</option>
+            <option value="service">{t('simulation.agents.types.service')}</option>
+            <option value="analyst">{t('simulation.agents.types.analyst')}</option>
           </Select>
         </FormControl>
 
         <FormControl isRequired>
-          <FormLabel>Description</FormLabel>
+          <FormLabel>{t('simulation.agents.description')}</FormLabel>
           <Textarea
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            placeholder={t('simulation.agents.descriptionPlaceholder')}
           />
         </FormControl>
 
         <FormControl isRequired>
-          <FormLabel>Experience Level</FormLabel>
+          <FormLabel>{t('simulation.agents.experience')}</FormLabel>
           <Select
             value={formData.experience}
             onChange={(e) => setFormData({ ...formData, experience: e.target.value as Agent["experience"] })}
           >
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-            <option value="expert">Expert</option>
+            <option value="beginner">{t('simulation.agents.experienceLevels.beginner')}</option>
+            <option value="intermediate">{t('simulation.agents.experienceLevels.intermediate')}</option>
+            <option value="advanced">{t('simulation.agents.experienceLevels.advanced')}</option>
+            <option value="expert">{t('simulation.agents.experienceLevels.expert')}</option>
           </Select>
         </FormControl>
 
         <FormControl isRequired>
-          <FormLabel>Traits (comma-separated)</FormLabel>
+          <FormLabel>{t('simulation.agents.traits')}</FormLabel>
           <Input
             value={formData.traits.join(", ")}
             onChange={(e) => setFormData({ ...formData, traits: e.target.value.split(",").map(t => t.trim()) })}
+            placeholder={t('simulation.agents.traitsPlaceholder')}
           />
         </FormControl>
 
         <HStack spacing={2} width="100%" justify="flex-end">
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button variant="ghost" onClick={onClose}>{t('common.cancel')}</Button>
           <Button type="submit" colorScheme="blue">
-            {agent ? "Update" : "Create"}
+            {agent ? t('common.update') : t('common.create')}
           </Button>
         </HStack>
       </VStack>
@@ -180,6 +186,7 @@ function AgentForm({ agent, onSubmit, onClose }: {
 }
 
 export default function AgentsView() {
+  const { t } = useI18n()
   const [filter, setFilter] = useState<string>("all")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedAgent, setSelectedAgent] = useState<Agent | undefined>()
@@ -229,13 +236,13 @@ export default function AgentsView() {
               leftIcon={<Icon as={FiFilter} />}
               variant="outline"
             >
-              Filter: {filter.charAt(0).toUpperCase() + filter.slice(1)}
+              {t('common.filter')}: {t(`simulation.agents.status.${filter}`)}
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => setFilter("all")}>All Agents</MenuItem>
-              <MenuItem onClick={() => setFilter("active")}>Active</MenuItem>
-              <MenuItem onClick={() => setFilter("ready")}>Ready</MenuItem>
-              <MenuItem onClick={() => setFilter("training")}>Training</MenuItem>
+              <MenuItem onClick={() => setFilter("all")}>{t('common.all')}</MenuItem>
+              <MenuItem onClick={() => setFilter("active")}>{t('simulation.agents.status.active')}</MenuItem>
+              <MenuItem onClick={() => setFilter("ready")}>{t('simulation.agents.status.ready')}</MenuItem>
+              <MenuItem onClick={() => setFilter("training")}>{t('simulation.agents.status.training')}</MenuItem>
             </MenuList>
           </Menu>
         </HStack>
@@ -246,7 +253,7 @@ export default function AgentsView() {
           onClick={handleCreate}
           isLoading={isCreating}
         >
-          Create Agent
+          {t('simulation.agents.createAgent')}
         </Button>
       </Flex>
 
@@ -264,7 +271,7 @@ export default function AgentsView() {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            {selectedAgent ? "Edit Agent" : "Create New Agent"}
+            {selectedAgent ? t('simulation.agents.editAgent') : t('simulation.agents.createAgent')}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>

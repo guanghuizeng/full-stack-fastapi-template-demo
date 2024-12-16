@@ -36,8 +36,10 @@ import {
 } from "@chakra-ui/react"
 import { FiFilter, FiPlus } from "react-icons/fi"
 import { useWorlds, type World } from "../../../hooks/useWorlds"
+import { useI18n } from "../../../hooks/useI18n"
 
 function WorldCard({ world, onEdit }: { world: World; onEdit: (world: World) => void }) {
+  const { t } = useI18n()
   const bg = useColorModeValue("white", "gray.800")
   const borderColor = useColorModeValue("gray.200", "gray.700")
   const { startWorld, stopWorld, isStarting, isStopping } = useWorlds()
@@ -49,6 +51,8 @@ function WorldCard({ world, onEdit }: { world: World; onEdit: (world: World) => 
       startWorld(world.id)
     }
   }
+
+  console.log(world, t('simulation.worlds.status'))
 
   return (
     <Box
@@ -76,9 +80,6 @@ function WorldCard({ world, onEdit }: { world: World; onEdit: (world: World) => 
 
       <VStack align="stretch" spacing={3}>
         <HStack justify="space-between">
-          <Text fontSize="sm" color="gray.500">
-            Status
-          </Text>
           <Tag
             colorScheme={
               world.status === "active"
@@ -88,20 +89,20 @@ function WorldCard({ world, onEdit }: { world: World; onEdit: (world: World) => 
                 : "purple"
             }
           >
-            {world.status}
+            {t(`simulation.worlds.status.${world.status}`)}
           </Tag>
         </HStack>
 
         <HStack justify="space-between">
           <Text fontSize="sm" color="gray.500">
-            Complexity
+            {t('simulation.worlds.complexity')}
           </Text>
-          <Tag colorScheme="blue">{world.complexity}</Tag>
+          <Tag colorScheme="blue">{t(`simulation.worlds.complexityLevels.${world.complexity}`)}</Tag>
         </HStack>
 
         <HStack justify="space-between">
           <Text fontSize="sm" color="gray.500">
-            Agents
+            {t('simulation.worlds.agentCount')}
           </Text>
           <Text fontSize="sm" fontWeight="medium">
             {world.agentCount}
@@ -111,7 +112,7 @@ function WorldCard({ world, onEdit }: { world: World; onEdit: (world: World) => 
         <Box>
           <HStack justify="space-between" mb={1}>
             <Text fontSize="sm" color="gray.500">
-              Resource Usage
+              {t('simulation.worlds.resourceUsage')}
             </Text>
             <Text fontSize="sm" fontWeight="medium">
               {world.resourceUsage}%
@@ -138,14 +139,14 @@ function WorldCard({ world, onEdit }: { world: World; onEdit: (world: World) => 
           onClick={handleStartStop}
           isLoading={isStarting || isStopping}
         >
-          {world.status === "active" ? "Stop" : "Start"}
+          {world.status === "active" ? t('common.stop') : t('common.start')}
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={() => onEdit(world)}
         >
-          Configure
+          {t('simulation.worlds.configure')}
         </Button>
       </HStack>
     </Box>
@@ -157,6 +158,7 @@ function WorldForm({ world, onSubmit, onClose }: {
   onSubmit: (data: Partial<World>) => void
   onClose: () => void 
 }) {
+  const { t } = useI18n()
   const [formData, setFormData] = useState(world || {
     name: "",
     description: "",
@@ -179,35 +181,37 @@ function WorldForm({ world, onSubmit, onClose }: {
     <form onSubmit={handleSubmit}>
       <VStack spacing={4}>
         <FormControl isRequired>
-          <FormLabel>Name</FormLabel>
+          <FormLabel>{t('common.name')}</FormLabel>
           <Input
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder={t('simulation.worlds.namePlaceholder')}
           />
         </FormControl>
 
         <FormControl isRequired>
-          <FormLabel>Description</FormLabel>
+          <FormLabel>{t('common.description')}</FormLabel>
           <Textarea
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            placeholder={t('simulation.worlds.descriptionPlaceholder')}
           />
         </FormControl>
 
         <FormControl isRequired>
-          <FormLabel>Complexity</FormLabel>
+          <FormLabel>{t('simulation.worlds.complexity')}</FormLabel>
           <Select
             value={formData.complexity}
             onChange={(e) => setFormData({ ...formData, complexity: e.target.value as World["complexity"] })}
           >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+            <option value="low">{t('simulation.worlds.complexityLevels.low')}</option>
+            <option value="medium">{t('simulation.worlds.complexityLevels.medium')}</option>
+            <option value="high">{t('simulation.worlds.complexityLevels.high')}</option>
           </Select>
         </FormControl>
 
         <FormControl isRequired>
-          <FormLabel>Max Agents</FormLabel>
+          <FormLabel>{t('simulation.worlds.maxAgents')}</FormLabel>
           <NumberInput
             value={formData.settings?.maxAgents}
             onChange={(_, value) => setFormData({
@@ -226,7 +230,7 @@ function WorldForm({ world, onSubmit, onClose }: {
         </FormControl>
 
         <FormControl isRequired>
-          <FormLabel>Time Scale</FormLabel>
+          <FormLabel>{t('simulation.worlds.timeScale')}</FormLabel>
           <NumberInput
             value={formData.settings?.timeScale}
             onChange={(_, value) => setFormData({
@@ -246,18 +250,19 @@ function WorldForm({ world, onSubmit, onClose }: {
         </FormControl>
 
         <FormControl isRequired>
-          <FormLabel>Environment</FormLabel>
+          <FormLabel>{t('simulation.worlds.environment')}</FormLabel>
           <Input
             value={formData.settings?.environment}
             onChange={(e) => setFormData({
               ...formData,
               settings: { ...formData.settings!, environment: e.target.value },
             })}
+            placeholder={t('simulation.worlds.environmentPlaceholder')}
           />
         </FormControl>
 
         <FormControl>
-          <FormLabel>Constraints (comma-separated)</FormLabel>
+          <FormLabel>{t('simulation.worlds.constraints')}</FormLabel>
           <Input
             value={formData.settings?.constraints.join(", ")}
             onChange={(e) => setFormData({
@@ -267,13 +272,14 @@ function WorldForm({ world, onSubmit, onClose }: {
                 constraints: e.target.value.split(",").map(c => c.trim()),
               },
             })}
+            placeholder={t('simulation.worlds.constraintsPlaceholder')}
           />
         </FormControl>
 
         <HStack spacing={2} width="100%" justify="flex-end">
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button variant="ghost" onClick={onClose}>{t('common.cancel')}</Button>
           <Button type="submit" colorScheme="blue">
-            {world ? "Update" : "Create"}
+            {world ? t('common.update') : t('common.create')}
           </Button>
         </HStack>
       </VStack>
@@ -282,6 +288,7 @@ function WorldForm({ world, onSubmit, onClose }: {
 }
 
 export default function WorldsView() {
+  const { t } = useI18n()
   const [filter, setFilter] = useState<string>("all")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedWorld, setSelectedWorld] = useState<World | undefined>()
@@ -321,6 +328,10 @@ export default function WorldsView() {
     )
   }
 
+  const getFilterLabel = (filterValue: string) => {
+    return filterValue === 'all' ? t('common.all') : t(`simulation.worlds.status.${filterValue}`)
+  }
+
   return (
     <Box>
       <Flex justify="space-between" align="center" mb={6}>
@@ -331,13 +342,13 @@ export default function WorldsView() {
               leftIcon={<Icon as={FiFilter} />}
               variant="outline"
             >
-              Filter: {filter.charAt(0).toUpperCase() + filter.slice(1)}
+              {t('common.filter')}: {getFilterLabel(filter)}
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => setFilter("all")}>All Worlds</MenuItem>
-              <MenuItem onClick={() => setFilter("active")}>Active</MenuItem>
-              <MenuItem onClick={() => setFilter("standby")}>Standby</MenuItem>
-              <MenuItem onClick={() => setFilter("configuring")}>Configuring</MenuItem>
+              <MenuItem onClick={() => setFilter("all")}>{t('common.all')}</MenuItem>
+              <MenuItem onClick={() => setFilter("active")}>{t('simulation.worlds.status.active')}</MenuItem>
+              <MenuItem onClick={() => setFilter("standby")}>{t('simulation.worlds.status.standby')}</MenuItem>
+              <MenuItem onClick={() => setFilter("configuring")}>{t('simulation.worlds.status.configuring')}</MenuItem>
             </MenuList>
           </Menu>
         </HStack>
@@ -348,7 +359,7 @@ export default function WorldsView() {
           onClick={handleCreate}
           isLoading={isCreating}
         >
-          Create World
+          {t('simulation.worlds.createWorld')}
         </Button>
       </Flex>
 
@@ -366,7 +377,7 @@ export default function WorldsView() {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            {selectedWorld ? "Configure World" : "Create New World"}
+            {selectedWorld ? t('simulation.worlds.configureWorld') : t('simulation.worlds.createWorld')}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>

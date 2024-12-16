@@ -15,19 +15,12 @@ import {
   Tag,
   Spinner,
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   Tabs,
   TabList,
   Tab,
   TabPanels,
   TabPanel,
   VStack,
-  Heading,
   Progress,
 } from "@chakra-ui/react"
 import {
@@ -42,6 +35,7 @@ import {
 } from "react-icons/fi"
 import { useNavigate } from "@tanstack/react-router"
 import { useScenarios, type ScenarioTemplate, type ScenarioInstance } from "../../../hooks/useScenarios"
+import { useI18n } from "../../../hooks/useI18n"
 import CreateScenarioModal from "./CreateScenarioModal"
 
 const scenarioTypeIcons = {
@@ -59,6 +53,7 @@ const scenarioTypeColors = {
 }
 
 function TemplateCard({ template, onSelect }: { template: ScenarioTemplate; onSelect: () => void }) {
+  const { t } = useI18n()
   const bg = useColorModeValue("white", "gray.800")
   const borderColor = useColorModeValue("gray.200", "gray.700")
 
@@ -93,7 +88,7 @@ function TemplateCard({ template, onSelect }: { template: ScenarioTemplate; onSe
       <VStack align="stretch" spacing={3}>
         <Box>
           <Text fontSize="sm" fontWeight="medium" mb={2}>
-            Objectives
+            {t('simulation.scenarios.objectives')}
           </Text>
           {template.objectives.map((objective, index) => (
             <Text key={index} fontSize="sm" color="gray.600">
@@ -104,7 +99,7 @@ function TemplateCard({ template, onSelect }: { template: ScenarioTemplate; onSe
 
         <Box>
           <Text fontSize="sm" fontWeight="medium" mb={2}>
-            Required Agents
+            {t('simulation.scenarios.requiredAgents')}
           </Text>
           {template.requiredAgents.map((agent, index) => (
             <HStack key={index} spacing={2}>
@@ -126,7 +121,7 @@ function TemplateCard({ template, onSelect }: { template: ScenarioTemplate; onSe
           leftIcon={<Icon as={FiPlay} />}
           onClick={onSelect}
         >
-          Create Scenario
+          {t('simulation.scenarios.createScenario')}
         </Button>
       </HStack>
     </Box>
@@ -134,6 +129,7 @@ function TemplateCard({ template, onSelect }: { template: ScenarioTemplate; onSe
 }
 
 function InstanceCard({ instance }: { instance: ScenarioInstance }) {
+  const { t } = useI18n()
   const bg = useColorModeValue("white", "gray.800")
   const borderColor = useColorModeValue("gray.200", "gray.700")
   const navigate = useNavigate()
@@ -166,7 +162,7 @@ function InstanceCard({ instance }: { instance: ScenarioInstance }) {
             {instance.name}
           </Text>
           <Tag size="sm" colorScheme={instance.status === "active" ? "green" : "gray"}>
-            {instance.status}
+            {t(`simulation.scenarios.status.${instance.status}`)}
           </Tag>
         </VStack>
       </HStack>
@@ -180,7 +176,7 @@ function InstanceCard({ instance }: { instance: ScenarioInstance }) {
           <Box>
             <HStack justify="space-between" mb={1}>
               <Text fontSize="sm" color="gray.500">
-                Progress
+                {t('simulation.scenarios.progress')}
               </Text>
               <Text fontSize="sm" fontWeight="medium">
                 {instance.metrics.progress}%
@@ -196,7 +192,7 @@ function InstanceCard({ instance }: { instance: ScenarioInstance }) {
           <Grid templateColumns="repeat(2, 1fr)" gap={4}>
             <Box>
               <Text fontSize="sm" color="gray.500">
-                Success Rate
+                {t('simulation.scenarios.successRate')}
               </Text>
               <Text fontSize="sm" fontWeight="medium">
                 {instance.metrics.successRate}%
@@ -204,7 +200,7 @@ function InstanceCard({ instance }: { instance: ScenarioInstance }) {
             </Box>
             <Box>
               <Text fontSize="sm" color="gray.500">
-                Tasks
+                {t('simulation.scenarios.tasks')}
               </Text>
               <Text fontSize="sm" fontWeight="medium">
                 {instance.metrics.completedTasks}
@@ -222,7 +218,7 @@ function InstanceCard({ instance }: { instance: ScenarioInstance }) {
           onClick={handleViewDetails}
           isDisabled={instance.status !== "active"}
         >
-          View Details
+          {t('common.view')}
         </Button>
       </HStack>
     </Box>
@@ -230,6 +226,7 @@ function InstanceCard({ instance }: { instance: ScenarioInstance }) {
 }
 
 export default function ScenariosView() {
+  const { t } = useI18n()
   const [activeTab, setActiveTab] = useState(0)
   const [filter, setFilter] = useState<string>("all")
   const { templates, instances, isLoading } = useScenarios()
@@ -253,8 +250,8 @@ export default function ScenariosView() {
     <Box>
       <Tabs index={activeTab} onChange={setActiveTab} colorScheme="blue">
         <TabList mb={6}>
-          <Tab>Templates</Tab>
-          <Tab>Active Scenarios</Tab>
+          <Tab>{t('simulation.scenarios.templates')}</Tab>
+          <Tab>{t('simulation.scenarios.activeScenarios')}</Tab>
         </TabList>
 
         <TabPanels>
@@ -267,14 +264,14 @@ export default function ScenariosView() {
                     leftIcon={<Icon as={FiFilter} />}
                     variant="outline"
                   >
-                    Filter: {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                    {t('common.filter')}: {t(`simulation.scenarios.types.${filter}`)}
                   </MenuButton>
                   <MenuList>
-                    <MenuItem onClick={() => setFilter("all")}>All Types</MenuItem>
-                    <MenuItem onClick={() => setFilter("chat")}>Chat</MenuItem>
-                    <MenuItem onClick={() => setFilter("task")}>Task</MenuItem>
-                    <MenuItem onClick={() => setFilter("decision")}>Decision</MenuItem>
-                    <MenuItem onClick={() => setFilter("collaboration")}>Collaboration</MenuItem>
+                    <MenuItem onClick={() => setFilter("all")}>{t('common.all')}</MenuItem>
+                    <MenuItem onClick={() => setFilter("chat")}>{t('simulation.scenarios.types.chat')}</MenuItem>
+                    <MenuItem onClick={() => setFilter("task")}>{t('simulation.scenarios.types.task')}</MenuItem>
+                    <MenuItem onClick={() => setFilter("decision")}>{t('simulation.scenarios.types.decision')}</MenuItem>
+                    <MenuItem onClick={() => setFilter("collaboration")}>{t('simulation.scenarios.types.collaboration')}</MenuItem>
                   </MenuList>
                 </Menu>
               </HStack>
@@ -287,7 +284,7 @@ export default function ScenariosView() {
                   onOpen()
                 }}
               >
-                Create New Scenario
+                {t('simulation.scenarios.createScenario')}
               </Button>
             </Flex>
 
@@ -317,14 +314,14 @@ export default function ScenariosView() {
                     leftIcon={<Icon as={FiFilter} />}
                     variant="outline"
                   >
-                    Filter: {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                    {t('common.filter')}: {t(`simulation.scenarios.types.${filter}`)}
                   </MenuButton>
                   <MenuList>
-                    <MenuItem onClick={() => setFilter("all")}>All Types</MenuItem>
-                    <MenuItem onClick={() => setFilter("chat")}>Chat</MenuItem>
-                    <MenuItem onClick={() => setFilter("task")}>Task</MenuItem>
-                    <MenuItem onClick={() => setFilter("decision")}>Decision</MenuItem>
-                    <MenuItem onClick={() => setFilter("collaboration")}>Collaboration</MenuItem>
+                    <MenuItem onClick={() => setFilter("all")}>{t('common.all')}</MenuItem>
+                    <MenuItem onClick={() => setFilter("chat")}>{t('simulation.scenarios.types.chat')}</MenuItem>
+                    <MenuItem onClick={() => setFilter("task")}>{t('simulation.scenarios.types.task')}</MenuItem>
+                    <MenuItem onClick={() => setFilter("decision")}>{t('simulation.scenarios.types.decision')}</MenuItem>
+                    <MenuItem onClick={() => setFilter("collaboration")}>{t('simulation.scenarios.types.collaboration')}</MenuItem>
                   </MenuList>
                 </Menu>
               </HStack>

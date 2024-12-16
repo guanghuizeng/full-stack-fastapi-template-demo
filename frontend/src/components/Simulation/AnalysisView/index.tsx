@@ -40,6 +40,7 @@ import {
   BarChart,
   Bar,
 } from "recharts"
+import { useI18n } from "../../../hooks/useI18n"
 
 interface MetricCardProps {
   title: string
@@ -77,38 +78,39 @@ interface PerformanceTabProps {
 }
 
 function PerformanceTab({ metrics }: PerformanceTabProps) {
+  const { t } = useI18n()
   return (
     <Box>
       <Grid templateColumns="repeat(4, 1fr)" gap={4} mb={6}>
         <MetricCard
-          title="Total Simulations"
+          title={t('simulation.analysis.metrics.totalSimulations')}
           value={metrics.totalSimulations}
           icon={FiActivity}
-          helpText="Last 30 days"
+          helpText={t('simulation.analysis.metrics.last30Days')}
         />
         <MetricCard
-          title="Active Agents"
+          title={t('simulation.analysis.metrics.activeAgents')}
           value={metrics.activeAgents}
           icon={FiUsers}
-          helpText="Currently running"
+          helpText={t('simulation.analysis.metrics.currentlyRunning')}
         />
         <MetricCard
-          title="Average Duration"
+          title={t('simulation.analysis.metrics.avgDuration')}
           value={metrics.avgDuration}
           icon={FiClock}
-          helpText="Per simulation"
+          helpText={t('simulation.analysis.metrics.perSimulation')}
         />
         <MetricCard
-          title="Success Rate"
+          title={t('simulation.analysis.metrics.successRate')}
           value={metrics.successRate}
           icon={FiZap}
-          helpText="Completed simulations"
+          helpText={t('simulation.analysis.metrics.completedSimulations')}
         />
       </Grid>
 
       <Box mb={6}>
         <Heading size="md" mb={4}>
-          Activity Timeline
+          {t('simulation.analysis.metrics.activityTimeline')}
         </Heading>
         <Box height="300px">
           <ResponsiveContainer width="100%" height="100%">
@@ -122,7 +124,7 @@ function PerformanceTab({ metrics }: PerformanceTabProps) {
                 type="monotone"
                 dataKey="value"
                 stroke="#3182ce"
-                name="Activity Level"
+                name={t('simulation.analysis.metrics.activityLevel')}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -137,12 +139,13 @@ interface ResourcesTabProps {
 }
 
 function ResourcesTab({ resources }: ResourcesTabProps) {
+  const { t } = useI18n()
   return (
     <Box>
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
         <Box>
           <Heading size="md" mb={4}>
-            CPU Usage
+            {t('simulation.analysis.resources.cpuUsage')}
           </Heading>
           <Box height="200px">
             <ResponsiveContainer width="100%" height="100%">
@@ -156,7 +159,7 @@ function ResourcesTab({ resources }: ResourcesTabProps) {
                   type="monotone"
                   dataKey="usage"
                   stroke="#3182ce"
-                  name="CPU Usage (%)"
+                  name={t('simulation.analysis.resources.cpuUsagePercent')}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -164,7 +167,7 @@ function ResourcesTab({ resources }: ResourcesTabProps) {
         </Box>
         <Box>
           <Heading size="md" mb={4}>
-            Memory Usage
+            {t('simulation.analysis.resources.memoryUsage')}
           </Heading>
           <Box height="200px">
             <ResponsiveContainer width="100%" height="100%">
@@ -178,7 +181,7 @@ function ResourcesTab({ resources }: ResourcesTabProps) {
                   type="monotone"
                   dataKey="usage"
                   stroke="#3182ce"
-                  name="Memory Usage (%)"
+                  name={t('simulation.analysis.resources.memoryUsagePercent')}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -194,12 +197,13 @@ interface InsightsTabProps {
 }
 
 function InsightsTab({ insights }: InsightsTabProps) {
+  const { t } = useI18n()
   return (
     <Box>
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
         <Box>
           <Heading size="md" mb={4}>
-            Agent Performance
+            {t('simulation.analysis.insights.agentPerformance')}
           </Heading>
           <Box height="300px">
             <ResponsiveContainer width="100%" height="100%">
@@ -209,15 +213,15 @@ function InsightsTab({ insights }: InsightsTabProps) {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="score" fill="#3182ce" name="Performance Score" />
-                <Bar dataKey="tasks" fill="#805ad5" name="Tasks Completed" />
+                <Bar dataKey="score" fill="#3182ce" name={t('simulation.analysis.insights.performanceScore')} />
+                <Bar dataKey="tasks" fill="#805ad5" name={t('simulation.analysis.insights.tasksCompleted')} />
               </BarChart>
             </ResponsiveContainer>
           </Box>
         </Box>
         <Box>
           <Heading size="md" mb={4}>
-            Scenario Success Rates
+            {t('simulation.analysis.insights.scenarioSuccessRates')}
           </Heading>
           <Box>
             {insights.scenarioSuccess.map((scenario: any) => (
@@ -244,6 +248,7 @@ function InsightsTab({ insights }: InsightsTabProps) {
 }
 
 export default function AnalysisView() {
+  const { t } = useI18n()
   const [timeRange, setTimeRange] = useState("24h")
   const bg = useColorModeValue("white", "gray.800")
   const borderColor = useColorModeValue("gray.200", "gray.700")
@@ -265,10 +270,10 @@ export default function AnalysisView() {
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
         >
-          <option value="24h">Last 24 Hours</option>
-          <option value="7d">Last 7 Days</option>
-          <option value="30d">Last 30 Days</option>
-          <option value="custom">Custom Range</option>
+          <option value="24h">{t('simulation.analysis.timeRange.24h')}</option>
+          <option value="7d">{t('simulation.analysis.timeRange.7d')}</option>
+          <option value="30d">{t('simulation.analysis.timeRange.30d')}</option>
+          <option value="custom">{t('simulation.analysis.timeRange.custom')}</option>
         </Select>
       </HStack>
 
@@ -281,9 +286,9 @@ export default function AnalysisView() {
       >
         <Tabs colorScheme="blue">
           <TabList mb={4}>
-            <Tab>Performance</Tab>
-            <Tab>Resources</Tab>
-            <Tab>Insights</Tab>
+            <Tab>{t('simulation.analysis.metrics.title')}</Tab>
+            <Tab>{t('simulation.analysis.resources.title')}</Tab>
+            <Tab>{t('simulation.analysis.insights.title')}</Tab>
           </TabList>
 
           <TabPanels>
