@@ -18,7 +18,6 @@ function Dashboard() {
             Hi, {currentUser?.full_name || currentUser?.email} 👋🏼
           </Text>
           <Text>Welcome back, nice to see you again!</Text>
-          <Text>It's a solid step to following creations!</Text>
         </Box>
       </Container>
     </>

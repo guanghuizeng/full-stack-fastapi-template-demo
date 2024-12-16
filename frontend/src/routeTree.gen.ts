@@ -17,9 +17,15 @@ import { Route as RecoverPasswordImport } from './routes/recover-password'
 import { Route as LoginImport } from './routes/login'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
+import { Route as LayoutSimulationImport } from './routes/_layout/simulation'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutSimulationWorldsImport } from './routes/_layout/simulation/worlds'
+import { Route as LayoutSimulationScenariosImport } from './routes/_layout/simulation/scenarios'
+import { Route as LayoutSimulationAnalysisImport } from './routes/_layout/simulation/analysis'
+import { Route as LayoutSimulationAgentsImport } from './routes/_layout/simulation/agents'
+import { Route as LayoutSimulationScenarioScenarioIdImport } from './routes/_layout/simulation/scenario/$scenarioId'
 
 // Create/Update Routes
 
@@ -53,6 +59,11 @@ const LayoutIndexRoute = LayoutIndexImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutSimulationRoute = LayoutSimulationImport.update({
+  path: '/simulation',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutSettingsRoute = LayoutSettingsImport.update({
   path: '/settings',
   getParentRoute: () => LayoutRoute,
@@ -67,6 +78,32 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+
+const LayoutSimulationWorldsRoute = LayoutSimulationWorldsImport.update({
+  path: '/worlds',
+  getParentRoute: () => LayoutSimulationRoute,
+} as any)
+
+const LayoutSimulationScenariosRoute = LayoutSimulationScenariosImport.update({
+  path: '/scenarios',
+  getParentRoute: () => LayoutSimulationRoute,
+} as any)
+
+const LayoutSimulationAnalysisRoute = LayoutSimulationAnalysisImport.update({
+  path: '/analysis',
+  getParentRoute: () => LayoutSimulationRoute,
+} as any)
+
+const LayoutSimulationAgentsRoute = LayoutSimulationAgentsImport.update({
+  path: '/agents',
+  getParentRoute: () => LayoutSimulationRoute,
+} as any)
+
+const LayoutSimulationScenarioScenarioIdRoute =
+  LayoutSimulationScenarioScenarioIdImport.update({
+    path: '/scenario/$scenarioId',
+    getParentRoute: () => LayoutSimulationRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -104,9 +141,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSettingsImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/simulation': {
+      preLoaderRoute: typeof LayoutSimulationImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/': {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
+    }
+    '/_layout/simulation/agents': {
+      preLoaderRoute: typeof LayoutSimulationAgentsImport
+      parentRoute: typeof LayoutSimulationImport
+    }
+    '/_layout/simulation/analysis': {
+      preLoaderRoute: typeof LayoutSimulationAnalysisImport
+      parentRoute: typeof LayoutSimulationImport
+    }
+    '/_layout/simulation/scenarios': {
+      preLoaderRoute: typeof LayoutSimulationScenariosImport
+      parentRoute: typeof LayoutSimulationImport
+    }
+    '/_layout/simulation/worlds': {
+      preLoaderRoute: typeof LayoutSimulationWorldsImport
+      parentRoute: typeof LayoutSimulationImport
+    }
+    '/_layout/simulation/scenario/$scenarioId': {
+      preLoaderRoute: typeof LayoutSimulationScenarioScenarioIdImport
+      parentRoute: typeof LayoutSimulationImport
     }
   }
 }
@@ -118,6 +179,13 @@ export const routeTree = rootRoute.addChildren([
     LayoutAdminRoute,
     LayoutItemsRoute,
     LayoutSettingsRoute,
+    LayoutSimulationRoute.addChildren([
+      LayoutSimulationAgentsRoute,
+      LayoutSimulationAnalysisRoute,
+      LayoutSimulationScenariosRoute,
+      LayoutSimulationWorldsRoute,
+      LayoutSimulationScenarioScenarioIdRoute,
+    ]),
     LayoutIndexRoute,
   ]),
   LoginRoute,
