@@ -2,7 +2,8 @@ export default {
   common: {
     dashboard: "Dashboard",
     simulation: "Simulation",
-    settings: "User Settings",
+    chat: "Chat",
+    settings: "Settings",
     admin: "Admin",
     create: "Create",
     edit: "Edit",
@@ -21,8 +22,18 @@ export default {
     start: "Start",
     stop: "Stop",
   },
+  dashboard: {
+    title: "Dashboard",
+    description: "View system overview, usage statistics and latest updates",
+    features: "Main Features",
+  },
+  chat: {
+    title: "AI Chat",
+    description: "Interact with AI assistants using natural language",
+  },
   simulation: {
     title: "AI Simulation",
+    description: "Manage and train AI agents, create scenarios, analyze performance",
     scenarios: {
       title: "Scenarios",
       templates: "Templates",
@@ -151,5 +162,13 @@ export default {
         custom: "Custom Range"
       }
     }
+  },
+  settings: {
+    title: "Settings",
+    description: "Configure personal info, preferences, security and system parameters",
+  },
+  admin: {
+    title: "Admin",
+    description: "Manage user permissions, system resources and operational status",
   }
 } 

@@ -1,56 +1,70 @@
-import { Box, Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react"
-import { useQueryClient } from "@tanstack/react-query"
+import { Icon } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
-import { FiBriefcase, FiHome, FiSettings, FiUsers, FiCpu } from "react-icons/fi"
+import {
+  FiCpu,
+  FiGrid,
+  FiMessageSquare,
+  FiSettings,
+  FiUsers,
+} from "react-icons/fi"
+
 import { useI18n } from "../../hooks/useI18n"
+import type { SidebarItem } from "../../types"
+import { Box, Flex, Text, useColorModeValue } from "@chakra-ui/react"
 
-import type { UserPublic } from "../../client"
-
-const SidebarItems = ({ onClose }: { onClose?: () => void }) => {
+const SidebarItems = () => {
   const { t } = useI18n()
-  const queryClient = useQueryClient()
-  const textColor = useColorModeValue("ui.main", "ui.light")
-  const bgActive = useColorModeValue("#E2E8F0", "#4A5568")
-  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
+  const activeColor = useColorModeValue("blue.500", "blue.200")
+  const hoverBg = useColorModeValue("gray.100", "gray.700")
 
-  const items = [
-    { icon: FiHome, title: t('common.dashboard'), path: "/", visible: true },
-    { icon: FiBriefcase, title: "Items", path: "/items", visible: false },
-    { icon: FiCpu, title: t('common.simulation'), path: "/simulation/scenarios", visible: true },
-    { icon: FiSettings, title: t('common.settings'), path: "/settings", visible: true },
+  const items: SidebarItem[] = [
+    {
+      name: t('common.dashboard'),
+      icon: <Icon as={FiGrid} />,
+      path: "/",
+    },
+    {
+      name: t('common.chat'),
+      icon: <Icon as={FiMessageSquare} />,
+      path: "/chat",
+    },
+    {
+      name: t('common.simulation'),
+      icon: <Icon as={FiCpu} />,
+      path: "/simulation/scenarios",
+    },
+    {
+      name: t('common.settings'),
+      icon: <Icon as={FiSettings} />,
+      path: "/settings",
+    },
+    {
+      name: t('common.admin'),
+      icon: <Icon as={FiUsers} />,
+      path: "/admin",
+      adminOnly: true,
+    },
   ]
 
-  const finalItems = currentUser?.is_superuser
-    ? [...items, { icon: FiUsers, title: t('common.admin'), path: "/admin", visible: true }]
-    : items
-
-  const listItems = finalItems
-    .filter(item => item.visible)
-    .map(({ icon, title, path }) => (
-      <Flex
-        as={Link}
-        to={path}
-        w="100%"
-        p={2}
-        key={title}
-        activeProps={{
-          style: {
-            background: bgActive,
-            borderRadius: "12px",
-          },
-        }}
-        color={textColor}
-        onClick={onClose}
-      >
-        <Icon as={icon} alignSelf="center" />
-        <Text ml={2}>{title}</Text>
-      </Flex>
-    ))
-
   return (
-    <Box>
-      <Box>{listItems}</Box>
-    </Box>
+    <Flex direction="column" gap={1}>
+      {items.map((item) => (
+        <Box
+          key={item.path}
+          as={Link}
+          to={item.path}
+          p={3}
+          borderRadius="md"
+          _hover={{ bg: hoverBg }}
+          _activeLink={{ color: activeColor, bg: hoverBg }}
+        >
+          <Flex align="center" gap={3}>
+            {item.icon}
+            <Text>{item.name}</Text>
+          </Flex>
+        </Box>
+      ))}
+    </Flex>
   )
 }
 

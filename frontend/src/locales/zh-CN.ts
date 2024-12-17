@@ -2,6 +2,7 @@ export default {
   common: {
     dashboard: "控制台",
     simulation: "AI助手",
+    chat: "对话",
     settings: "系统设置",
     admin: "管理后台",
     create: "创建",
@@ -23,9 +24,99 @@ export default {
     save: "保存",
     default: "默认",
     logout: "退出登录",
+    send: "发送",
+    retry: "重试",
+    copy: "复制",
+    upload: "上传",
+    download: "下载",
+    more: "更多",
+  },
+  dashboard: {
+    title: "控制台",
+    description: "查看系统概况、使用统计和最新动态",
+    features: "主要功能",
+  },
+  chat: {
+    title: "智能对话",
+    description: "与AI助手进行自然语言交互，获取帮助和建议",
+    newChat: "新建对话",
+    searchPlaceholder: "搜索对话历史...",
+    inputPlaceholder: "输入消息...",
+    noMessages: "暂无消息",
+    loadMore: "加载更多",
+    messageActions: {
+      copy: "复制",
+      quote: "引用",
+      edit: "编辑",
+      delete: "删除",
+      retry: "重试"
+    },
+    toolbar: {
+      upload: "上传文件",
+      emoji: "表情",
+      code: "代码块",
+      clear: "清空"
+    },
+    status: {
+      online: "在线",
+      offline: "离线",
+      typing: "正在输入...",
+      thinking: "思考中...",
+      generating: "生成中...",
+    },
+    errors: {
+      sendFailed: "发送失败",
+      networkError: "网络错误",
+      uploadFailed: "上传失败",
+      invalidFormat: "格式不支持"
+    },
+    agent: {
+      switch: "切换助手",
+      add: "添加助手",
+      remove: "移除助手",
+      configure: "配置助手",
+      profile: "助手信息",
+    },
+    context: {
+      title: "上下文信息",
+      knowledge: "知识库",
+      reference: "参考资料",
+      history: "历史记录",
+      variables: "环境变量"
+    },
+    objectives: {
+      title: "对话目标",
+      add: "添加目标",
+      edit: "编目标",
+      remove: "删除目标",
+      complete: "完成目标",
+      progress: "目标进度"
+    },
+    settings: {
+      title: "对话设置",
+      general: {
+        title: "基本设置",
+        theme: "界面主题",
+        fontSize: "字体大小",
+        messageLayout: "消息布局"
+      },
+      notification: {
+        title: "通知设置",
+        sound: "声音提醒",
+        desktop: "桌面通知",
+        mention: "@提醒"
+      },
+      privacy: {
+        title: "隐私设置",
+        history: "保存历史",
+        share: "分享记录",
+        data: "数据使用"
+      }
+    }
   },
   settings: {
     title: "系统设置",
+    description: "配置个人信息、界面偏好、安全选项和系统参数",
     profile: {
       title: "个人信息",
       basicInfo: "基本信息",
@@ -39,7 +130,7 @@ export default {
       bio: "个人简介",
       bioPlaceholder: "请输入个人简介",
       updateSuccess: "个人信息更新成功",
-      updateError: "个人信息更新失败",
+      updateError: "个人信��更新失败",
       deleteSuccess: "账号已成功删除",
       deleteConfirmTitle: "确认删除账号",
       deleteConfirmMessage: "您的所有账号数据将被永久删除。如果确定，请点击\"确认\"继续。此操作无法撤销。"
@@ -62,7 +153,7 @@ export default {
         email: "邮件通知",
         push: "推送通知",
         desktop: "桌面通知",
-        sound: "声音提醒"
+        sound: "音提醒"
       },
       privacy: {
         title: "隐私设置",
@@ -163,6 +254,7 @@ export default {
   },
   simulation: {
     title: "AI助手系统",
+    description: "管理和训练AI助手，创建对话场景，分析性能数据",
     scenarios: {
       title: "对话场景",
       templates: "场景模板",
@@ -245,7 +337,7 @@ export default {
       constraints: "约束条件",
       namePlaceholder: "请输入环境名称",
       descriptionPlaceholder: "请输入环境描述",
-      environmentPlaceholder: "请输入环境名称",
+      environmentPlaceholder: "输入环境名称",
       constraintsPlaceholder: "请输入约束条件，用逗号分隔",
       complexityLevels: {
         low: "低",
@@ -301,5 +393,9 @@ export default {
         custom: "自定义范围"
       }
     }
+  },
+  admin: {
+    title: "管理后台",
+    description: "管理用户权限、系统资源和运行状态",
   }
 } 
