@@ -14,15 +14,13 @@ import {
 import { useI18n } from "../../../hooks/useI18n"
 
 interface ToolbarProps {
-  onClear?: () => void
-  onUpload?: () => void
   onInsertCode?: () => void
+  onClear?: () => void
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
-  onClear,
-  onUpload,
   onInsertCode,
+  onClear,
 }) => {
   const { t } = useI18n()
   const borderColor = useColorModeValue("gray.200", "gray.700")
@@ -34,16 +32,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
       borderBottom="1px"
       borderColor={borderColor}
     >
-      <Tooltip label={t('chat.toolbar.upload')}>
-        <IconButton
-          aria-label={t('chat.toolbar.upload')}
-          icon={<FiPaperclip />}
-          variant="ghost"
-          size="sm"
-          onClick={onUpload}
-        />
-      </Tooltip>
-
       <Tooltip label={t('chat.toolbar.code')}>
         <IconButton
           aria-label={t('chat.toolbar.code')}

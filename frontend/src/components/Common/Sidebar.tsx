@@ -49,29 +49,8 @@ const Sidebar = () => {
         <DrawerOverlay />
         <DrawerContent maxW="250px">
           <DrawerCloseButton />
-          <DrawerBody py={8}>
-            <Flex flexDir="column" justify="space-between">
-              <Box>
-                <Image src={Logo} alt="logo" py={6} />
-                <SidebarItems onClose={onClose} />
-                <Flex
-                  as="button"
-                  onClick={handleLogout}
-                  p={2}
-                  color="ui.danger"
-                  fontWeight="bold"
-                  alignItems="center"
-                >
-                  <FiLogOut />
-                  <Text ml={2}>Log out</Text>
-                </Flex>
-              </Box>
-              {currentUser?.email && (
-                <Text color={textColor} noOfLines={2} fontSize="sm" p={2}>
-                  Logged in as: {currentUser.email}
-                </Text>
-              )}
-            </Flex>
+          <DrawerBody p={0}>
+            <SidebarItems />
           </DrawerBody>
         </DrawerContent>
       </Drawer>

@@ -36,7 +36,7 @@ interface ChatMessageProps {
 }
 
 function ChatMessage({ message }: ChatMessageProps) {
-  const isUser = message.sender === "user"
+  const isUser = !message.sender.isAgent
   const bg = useColorModeValue(
     isUser ? "blue.50" : "gray.50",
     isUser ? "blue.900" : "gray.700"
@@ -54,7 +54,7 @@ function ChatMessage({ message }: ChatMessageProps) {
     >
       {!isUser && (
         <Avatar size="sm">
-          <AvatarBadge boxSize="1.25em" bg={message.sender === "user" ? "green.500" : "blue.500"} />
+          <AvatarBadge boxSize="1.25em" bg={!message.sender.isAgent ? "green.500" : "blue.500"} />
         </Avatar>
       )}
       <Box

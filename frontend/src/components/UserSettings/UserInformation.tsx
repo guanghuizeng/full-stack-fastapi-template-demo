@@ -122,7 +122,7 @@ const UserInformation = () => {
                 {...register("email", {
                   required: t('settings.profile.emailRequired'),
                   pattern: {
-                    value: emailPattern,
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: t('settings.profile.emailInvalid')
                   }
                 })}

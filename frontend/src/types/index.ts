@@ -41,4 +41,11 @@ export interface InsightData {
   agentPerformance: number;
   tasksCompleted: number;
   scenarioSuccessRates: number;
+}
+
+export interface SidebarItem {
+  name: string;
+  icon: React.ReactElement;
+  path: string;
+  adminOnly?: boolean;
 } 

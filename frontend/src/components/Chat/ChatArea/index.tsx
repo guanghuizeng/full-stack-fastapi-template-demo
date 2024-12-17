@@ -8,14 +8,16 @@ import {
 import { useI18n } from "../../../hooks/useI18n"
 import MessageList from "./MessageList"
 import VirtualScroller from "./VirtualScroller"
+import { useAgentChat } from "../../../hooks/useAgentChat"
 
-const ChatArea: React.FC = () => {
+interface ChatAreaProps {
+  onMessageAction: (action: string, message: any) => void
+}
+
+const ChatArea: React.FC<ChatAreaProps> = ({ onMessageAction }) => {
   const { t } = useI18n()
   const bg = useColorModeValue("gray.50", "gray.900")
-
-  // TODO: 使用 useChat hook 获取消息数据
-  const messages = []
-  const isLoading = false
+  const { messages, isLoading } = useAgentChat()
 
   return (
     <Box
@@ -48,6 +50,7 @@ const ChatArea: React.FC = () => {
             <MessageList
               messages={virtualItems}
               isLoading={isLoading}
+              onMessageAction={onMessageAction}
             />
           )}
         </VirtualScroller>

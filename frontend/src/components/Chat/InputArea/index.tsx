@@ -48,7 +48,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   const borderColor = useColorModeValue("gray.200", "gray.700")
   const { isOpen: isEmojiOpen, onToggle: onEmojiToggle } = useDisclosure()
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // Ctrl/Cmd + Enter to send
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
       e.preventDefault()
@@ -147,8 +147,6 @@ const InputArea: React.FC<InputAreaProps> = ({
     >
       <Flex direction="column" gap={2}>
         <Toolbar
-          isMarkdown={isMarkdown}
-          onToggleMarkdown={() => setIsMarkdown(!isMarkdown)}
           onInsertCode={toggleCodeMode}
           onClear={() => setMessage("")}
         />

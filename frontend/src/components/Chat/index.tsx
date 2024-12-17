@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import {
   Box,
   Flex,
@@ -9,11 +9,33 @@ import ChatArea from "./ChatArea"
 import InputArea from "./InputArea"
 import SidePanel from "./SidePanel"
 import { useI18n } from "../../hooks/useI18n"
+import { useAgentChat } from "../../hooks/useAgentChat"
 
 const ChatView: React.FC = () => {
   const { t } = useI18n()
   const bg = useColorModeValue("white", "gray.800")
   const borderColor = useColorModeValue("gray.200", "gray.700")
+  const { sendMessage } = useAgentChat()
+
+  const handleSend = (content: string, type: 'text' | 'code' | 'image') => {
+    sendMessage(content)
+  }
+
+  const handleMessageAction = (action: string, message: any) => {
+    switch (action) {
+      case 'copy':
+        navigator.clipboard.writeText(message.content)
+        break
+      case 'edit':
+        // TODO: Implement edit functionality
+        break
+      case 'quote':
+        // TODO: Implement quote functionality
+        break
+      default:
+        break
+    }
+  }
 
   return (
     <Flex h="100%" overflow="hidden">
@@ -30,10 +52,10 @@ const ChatView: React.FC = () => {
         <ChatHeader />
 
         {/* 消息列表区域 */}
-        <ChatArea />
+        <ChatArea onMessageAction={handleMessageAction} />
 
         {/* 输入区域 */}
-        <InputArea />
+        <InputArea onSend={handleSend} />
       </Box>
 
       {/* 右侧面板 */}

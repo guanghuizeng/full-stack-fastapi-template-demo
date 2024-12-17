@@ -3,8 +3,17 @@ import { useState, useCallback } from "react"
 export interface Message {
   id: string;
   content: string;
-  sender: 'user' | 'agent';
-  timestamp: Date;
+  type: 'text' | 'code' | 'image';
+  language?: string;
+  sender: {
+    id: string;
+    name: string;
+    avatar?: string;
+    isAgent?: boolean;
+  };
+  timestamp: string;
+  status?: 'sending' | 'sent' | 'error' | 'read';
+  replyTo?: Message;
 }
 
 export interface Participant {
@@ -30,8 +39,13 @@ export function useAgentChat() {
       const newMessage: Message = {
         id: Math.random().toString(36).substring(2, 9),
         content,
-        sender: 'user',
-        timestamp: new Date()
+        type: 'text',
+        sender: {
+          id: 'user-1',
+          name: 'User',
+          isAgent: false
+        },
+        timestamp: new Date().toISOString()
       };
       setMessages(prev => [...prev, newMessage]);
 
@@ -40,8 +54,13 @@ export function useAgentChat() {
         const agentResponse: Message = {
           id: Math.random().toString(36).substring(2, 9),
           content: "This is a simulated agent response. The actual implementation will connect to your backend API.",
-          sender: 'agent',
-          timestamp: new Date()
+          type: 'text',
+          sender: {
+            id: 'agent-1',
+            name: 'AI Assistant',
+            isAgent: true
+          },
+          timestamp: new Date().toISOString()
         };
         setMessages(prev => [...prev, agentResponse]);
         setIsLoading(false);
