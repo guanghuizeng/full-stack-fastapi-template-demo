@@ -1,4 +1,4 @@
-import React from "react"
+import React, { lazy, Suspense } from "react"
 import {
   Box,
   Circle,
@@ -13,12 +13,15 @@ import {
   Tag,
   Icon,
   useColorModeValue,
+  Spinner,
 } from "@chakra-ui/react"
 import { FiCheck, FiCpu } from "react-icons/fi"
 import { useI18n } from "../../../hooks/useI18n"
-import MessageList from "./MessageList"
-import VirtualScroller from "./VirtualScroller"
-import { useAgentChat } from "../../../hooks/useAgentChat"
+import { useAgentChat, type Message } from "../../../hooks/useAgentChat"
+
+// Lazy load components
+const MessageList = lazy(() => import("./MessageList"))
+const VirtualScroller = lazy(() => import("./VirtualScroller"))
 
 interface ChatAreaProps {
   onMessageAction: (action: string, message: any) => void
@@ -121,22 +124,28 @@ const ChatArea: React.FC<ChatAreaProps> = ({ onMessageAction }) => {
           </VStack>
         </Flex>
       ) : (
-        <VirtualScroller
-          items={messages}
-          itemHeight={100}
-          overscan={5}
-          onLoadMore={() => {
-            // TODO: 加载更多消息
-          }}
-        >
-          {(virtualItems) => (
-            <MessageList
-              messages={virtualItems}
-              isLoading={isLoading}
-              onMessageAction={onMessageAction}
-            />
-          )}
-        </VirtualScroller>
+        <Suspense fallback={
+          <Flex justify="center" align="center" h="100%">
+            <Spinner size="xl" color="blue.500" />
+          </Flex>
+        }>
+          <VirtualScroller
+            items={messages}
+            itemHeight={100}
+            overscan={5}
+            onLoadMore={() => {
+              // TODO: 加载更多消息
+            }}
+          >
+            {(virtualItems: Message[]) => (
+              <MessageList
+                messages={virtualItems}
+                isLoading={isLoading}
+                onMessageAction={onMessageAction}
+              />
+            )}
+          </VirtualScroller>
+        </Suspense>
       )}
     </Box>
   )

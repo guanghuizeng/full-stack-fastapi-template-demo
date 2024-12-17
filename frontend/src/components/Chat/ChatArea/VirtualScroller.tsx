@@ -1,21 +1,21 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Box } from "@chakra-ui/react"
 
-interface VirtualScrollerProps<T> {
-  items: T[]
+interface VirtualScrollerProps {
+  items: any[]
   itemHeight: number
   overscan?: number
   onLoadMore?: () => void
-  children: (items: T[]) => React.ReactNode
+  children: (items: any[]) => React.ReactNode
 }
 
-function VirtualScroller<T>({
+const VirtualScroller: React.FC<VirtualScrollerProps> = ({
   items,
   itemHeight,
   overscan = 3,
   onLoadMore,
   children,
-}: VirtualScrollerProps<T>) {
+}) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollTop, setScrollTop] = useState(0)
   const [containerHeight, setContainerHeight] = useState(0)
