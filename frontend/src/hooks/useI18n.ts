@@ -7,7 +7,8 @@ type TranslationKey = string
 type TranslationValue = string | Record<string, any>
 
 export function useI18n() {
-  const [language, setLanguage] = useState<Language>('en-US')
+  // 固定使用中文
+  const [language] = useState<Language>('zh-CN')
 
   const translations = {
     'en-US': enUS,
@@ -35,7 +36,6 @@ export function useI18n() {
 
   return {
     language,
-    setLanguage,
     t,
   }
 }

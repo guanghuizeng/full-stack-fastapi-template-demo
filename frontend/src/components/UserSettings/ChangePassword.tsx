@@ -7,6 +7,7 @@ import {
   FormLabel,
   Heading,
   Input,
+  Text,
   useColorModeValue,
 } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
@@ -14,13 +15,14 @@ import { type SubmitHandler, useForm } from "react-hook-form"
 
 import { type ApiError, type UpdatePassword, UsersService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
-import { confirmPasswordRules, handleError, passwordRules } from "../../utils"
+import { useI18n } from "../../hooks/useI18n"
 
 interface UpdatePasswordForm extends UpdatePassword {
   confirm_password: string
 }
 
 const ChangePassword = () => {
+  const { t } = useI18n()
   const color = useColorModeValue("inherit", "ui.light")
   const showToast = useCustomToast()
   const {
@@ -34,11 +36,33 @@ const ChangePassword = () => {
     criteriaMode: "all",
   })
 
+  const passwordRules = () => ({
+    required: t('settings.security.password.required'),
+    minLength: {
+      value: 8,
+      message: t('settings.security.password.minLength')
+    },
+    validate: {
+      hasNumber: (value: string) =>
+        /\d/.test(value) || t('settings.security.password.needNumber'),
+      hasLetter: (value: string) =>
+        /[a-zA-Z]/.test(value) || t('settings.security.password.needLetter'),
+      hasSpecial: (value: string) =>
+        /[!@#$%^&*(),.?":{}|<>]/.test(value) || t('settings.security.password.needSpecial')
+    }
+  })
+
+  const confirmPasswordRules = () => ({
+    required: t('settings.security.password.confirmRequired'),
+    validate: (value: string) =>
+      value === getValues().new_password || t('settings.security.password.mismatch')
+  })
+
   const mutation = useMutation({
     mutationFn: (data: UpdatePassword) =>
       UsersService.updatePasswordMe({ requestBody: data }),
     onSuccess: () => {
-      showToast("Success!", "Password updated successfully.", "success")
+      showToast(t('common.success'), t('settings.security.password.updateSuccess'), "success")
       reset()
     },
     onError: (err: ApiError) => {
@@ -54,7 +78,7 @@ const ChangePassword = () => {
     <>
       <Container maxW="full">
         <Heading size="sm" py={4}>
-          Change Password
+          {t('settings.security.password.title')}
         </Heading>
         <Box
           w={{ sm: "full", md: "50%" }}
@@ -63,12 +87,12 @@ const ChangePassword = () => {
         >
           <FormControl isRequired isInvalid={!!errors.current_password}>
             <FormLabel color={color} htmlFor="current_password">
-              Current Password
+              {t('settings.security.password.current')}
             </FormLabel>
             <Input
               id="current_password"
-              {...register("current_password")}
-              placeholder="Password"
+              {...register("current_password", { required: t('settings.security.password.currentRequired') })}
+              placeholder={t('settings.security.password.current')}
               type="password"
               w="auto"
             />
@@ -79,11 +103,11 @@ const ChangePassword = () => {
             )}
           </FormControl>
           <FormControl mt={4} isRequired isInvalid={!!errors.new_password}>
-            <FormLabel htmlFor="password">Set Password</FormLabel>
+            <FormLabel htmlFor="password">{t('settings.security.password.new')}</FormLabel>
             <Input
               id="password"
               {...register("new_password", passwordRules())}
-              placeholder="Password"
+              placeholder={t('settings.security.password.new')}
               type="password"
               w="auto"
             />
@@ -92,11 +116,11 @@ const ChangePassword = () => {
             )}
           </FormControl>
           <FormControl mt={4} isRequired isInvalid={!!errors.confirm_password}>
-            <FormLabel htmlFor="confirm_password">Confirm Password</FormLabel>
+            <FormLabel htmlFor="confirm_password">{t('settings.security.password.confirm')}</FormLabel>
             <Input
               id="confirm_password"
-              {...register("confirm_password", confirmPasswordRules(getValues))}
-              placeholder="Password"
+              {...register("confirm_password", confirmPasswordRules())}
+              placeholder={t('settings.security.password.confirm')}
               type="password"
               w="auto"
             />
@@ -106,17 +130,21 @@ const ChangePassword = () => {
               </FormErrorMessage>
             )}
           </FormControl>
+          <Text mt={4} fontSize="sm" color="gray.500">
+            {t('settings.security.password.requirements')}
+          </Text>
           <Button
             variant="primary"
             mt={4}
             type="submit"
             isLoading={isSubmitting}
           >
-            Save
+            {t('common.save')}
           </Button>
         </Box>
       </Container>
     </>
   )
 }
+
 export default ChangePassword

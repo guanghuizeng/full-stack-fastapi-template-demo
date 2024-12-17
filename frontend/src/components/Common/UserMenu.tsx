@@ -11,8 +11,10 @@ import { FaUserAstronaut } from "react-icons/fa"
 import { FiLogOut, FiUser } from "react-icons/fi"
 
 import useAuth from "../../hooks/useAuth"
+import { useI18n } from "../../hooks/useI18n"
 
 const UserMenu = () => {
+  const { t } = useI18n()
   const { logout } = useAuth()
 
   const handleLogout = async () => {
@@ -39,7 +41,7 @@ const UserMenu = () => {
           />
           <MenuList>
             <MenuItem icon={<FiUser fontSize="18px" />} as={Link} to="settings">
-              My profile
+              {t('settings.profile.title')}
             </MenuItem>
             <MenuItem
               icon={<FiLogOut fontSize="18px" />}
@@ -47,7 +49,7 @@ const UserMenu = () => {
               color="ui.danger"
               fontWeight="bold"
             >
-              Log out
+              {t('common.logout')}
             </MenuItem>
           </MenuList>
         </Menu>

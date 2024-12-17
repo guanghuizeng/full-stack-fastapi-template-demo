@@ -23,9 +23,11 @@ import {
 } from "../../client"
 import useAuth from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
+import { useI18n } from "../../hooks/useI18n"
 import { emailPattern, handleError } from "../../utils"
 
 const UserInformation = () => {
+  const { t } = useI18n()
   const queryClient = useQueryClient()
   const color = useColorModeValue("inherit", "ui.light")
   const showToast = useCustomToast()
@@ -54,7 +56,8 @@ const UserInformation = () => {
     mutationFn: (data: UserUpdateMe) =>
       UsersService.updateUserMe({ requestBody: data }),
     onSuccess: () => {
-      showToast("Success!", "User updated successfully.", "success")
+      showToast(t('common.success'), t('settings.profile.updateSuccess'), "success")
+      toggleEditMode()
     },
     onError: (err: ApiError) => {
       handleError(err, showToast)
@@ -77,7 +80,7 @@ const UserInformation = () => {
     <>
       <Container maxW="full">
         <Heading size="sm" py={4}>
-          User Information
+          {t('settings.profile.basicInfo')}
         </Heading>
         <Box
           w={{ sm: "full", md: "50%" }}
@@ -86,7 +89,7 @@ const UserInformation = () => {
         >
           <FormControl>
             <FormLabel color={color} htmlFor="name">
-              Full name
+              {t('settings.profile.fullName')}
             </FormLabel>
             {editMode ? (
               <Input
@@ -95,6 +98,7 @@ const UserInformation = () => {
                 type="text"
                 size="md"
                 w="auto"
+                placeholder={t('settings.profile.fullName')}
               />
             ) : (
               <Text
@@ -110,18 +114,22 @@ const UserInformation = () => {
           </FormControl>
           <FormControl mt={4} isInvalid={!!errors.email}>
             <FormLabel color={color} htmlFor="email">
-              Email
+              {t('settings.profile.email')}
             </FormLabel>
             {editMode ? (
               <Input
                 id="email"
                 {...register("email", {
-                  required: "Email is required",
-                  pattern: emailPattern,
+                  required: t('settings.profile.emailRequired'),
+                  pattern: {
+                    value: emailPattern,
+                    message: t('settings.profile.emailInvalid')
+                  }
                 })}
                 type="email"
                 size="md"
                 w="auto"
+                placeholder={t('settings.profile.email')}
               />
             ) : (
               <Text size="md" py={2} isTruncated maxWidth="250px">
@@ -135,16 +143,16 @@ const UserInformation = () => {
           <Flex mt={4} gap={3}>
             <Button
               variant="primary"
-              onClick={toggleEditMode}
-              type={editMode ? "button" : "submit"}
-              isLoading={editMode ? isSubmitting : false}
+              onClick={editMode ? handleSubmit(onSubmit) : toggleEditMode}
+              type={editMode ? "submit" : "button"}
+              isLoading={isSubmitting}
               isDisabled={editMode ? !isDirty || !getValues("email") : false}
             >
-              {editMode ? "Save" : "Edit"}
+              {editMode ? t('common.save') : t('common.edit')}
             </Button>
             {editMode && (
               <Button onClick={onCancel} isDisabled={isSubmitting}>
-                Cancel
+                {t('common.cancel')}
               </Button>
             )}
           </Flex>

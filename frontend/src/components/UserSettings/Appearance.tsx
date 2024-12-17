@@ -7,27 +7,28 @@ import {
   Stack,
   useColorMode,
 } from "@chakra-ui/react"
+import { useI18n } from "../../hooks/useI18n"
 
 const Appearance = () => {
+  const { t } = useI18n()
   const { colorMode, toggleColorMode } = useColorMode()
 
   return (
     <>
       <Container maxW="full">
         <Heading size="sm" py={4}>
-          Appearance
+          {t('settings.preferences.theme.title')}
         </Heading>
         <RadioGroup onChange={toggleColorMode} value={colorMode}>
           <Stack>
-            {/* TODO: Add system default option */}
             <Radio value="light" colorScheme="teal">
-              Light Mode
+              {t('settings.preferences.theme.light')}
               <Badge ml="1" colorScheme="teal">
-                Default
+                {t('common.default')}
               </Badge>
             </Radio>
             <Radio value="dark" colorScheme="teal">
-              Dark Mode
+              {t('settings.preferences.theme.dark')}
             </Radio>
           </Stack>
         </RadioGroup>
@@ -35,4 +36,5 @@ const Appearance = () => {
     </>
   )
 }
+
 export default Appearance

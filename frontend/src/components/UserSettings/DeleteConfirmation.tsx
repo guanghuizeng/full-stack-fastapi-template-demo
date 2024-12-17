@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form"
 import { type ApiError, UsersService } from "../../client"
 import useAuth from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
+import { useI18n } from "../../hooks/useI18n"
 import { handleError } from "../../utils"
 
 interface DeleteProps {
@@ -22,6 +23,7 @@ interface DeleteProps {
 }
 
 const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
+  const { t } = useI18n()
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
@@ -35,8 +37,8 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
     mutationFn: () => UsersService.deleteUserMe(),
     onSuccess: () => {
       showToast(
-        "Success",
-        "Your account has been successfully deleted.",
+        t('common.success'),
+        t('settings.profile.deleteSuccess'),
         "success",
       )
       logout()
@@ -65,25 +67,22 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
       >
         <AlertDialogOverlay>
           <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
-            <AlertDialogHeader>Confirmation Required</AlertDialogHeader>
+            <AlertDialogHeader>{t('settings.profile.deleteConfirmTitle')}</AlertDialogHeader>
 
             <AlertDialogBody>
-              All your account data will be{" "}
-              <strong>permanently deleted.</strong> If you are sure, please
-              click <strong>"Confirm"</strong> to proceed. This action cannot be
-              undone.
+              {t('settings.profile.deleteConfirmMessage')}
             </AlertDialogBody>
 
             <AlertDialogFooter gap={3}>
               <Button variant="danger" type="submit" isLoading={isSubmitting}>
-                Confirm
+                {t('common.confirm')}
               </Button>
               <Button
                 ref={cancelRef}
                 onClick={onClose}
                 isDisabled={isSubmitting}
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

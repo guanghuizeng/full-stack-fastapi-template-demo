@@ -71,9 +71,11 @@ function AgentCard({ agent, onEdit }: { agent: Agent; onEdit: (agent: Agent) => 
 
       <HStack spacing={2}>
         <Tag colorScheme={agent.status === "active" ? "green" : agent.status === "ready" ? "blue" : "orange"}>
-          {t(`simulation.agents.status.${agent.status}`)}
+          {t(`simulation.agents.agentStatus.${agent.status}`)}
         </Tag>
-        <Tag colorScheme="gray">{t(`simulation.agents.experience`)}: {agent.experience}</Tag>
+        <Tag colorScheme="gray">
+          {t('simulation.agents.experience')}: {t(`simulation.agents.experienceLevels.${agent.experience}`)}
+        </Tag>
       </HStack>
 
       <HStack spacing={2} mt={4}>
@@ -227,6 +229,11 @@ export default function AgentsView() {
     )
   }
 
+  const getFilterLabel = (filter: string) => {
+    if (filter === "all") return t('common.all')
+    return t(`simulation.agents.agentStatus.${filter}`)
+  }
+
   return (
     <Box>
       <Flex justify="space-between" align="center" mb={6}>
@@ -237,13 +244,13 @@ export default function AgentsView() {
               leftIcon={<Icon as={FiFilter} />}
               variant="outline"
             >
-              {t('common.filter')}: {t(`simulation.agents.status.${filter}`)}
+              {t('common.filter')}: {getFilterLabel(filter)}
             </MenuButton>
             <MenuList>
               <MenuItem onClick={() => setFilter("all")}>{t('common.all')}</MenuItem>
-              <MenuItem onClick={() => setFilter("active")}>{t('simulation.agents.status.active')}</MenuItem>
-              <MenuItem onClick={() => setFilter("ready")}>{t('simulation.agents.status.ready')}</MenuItem>
-              <MenuItem onClick={() => setFilter("training")}>{t('simulation.agents.status.training')}</MenuItem>
+              <MenuItem onClick={() => setFilter("active")}>{t('simulation.agents.agentStatus.active')}</MenuItem>
+              <MenuItem onClick={() => setFilter("ready")}>{t('simulation.agents.agentStatus.ready')}</MenuItem>
+              <MenuItem onClick={() => setFilter("training")}>{t('simulation.agents.agentStatus.training')}</MenuItem>
             </MenuList>
           </Menu>
         </HStack>
