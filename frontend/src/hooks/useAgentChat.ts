@@ -1,107 +1,62 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 export interface Message {
-  id: string
-  content: string
-  sender: {
-    id: string
-    name: string
-    type: "user" | "agent"
-  }
-  timestamp: string
+  id: string;
+  content: string;
+  sender: 'user' | 'agent';
+  timestamp: Date;
+}
+
+export interface Participant {
+  id: string;
+  name: string;
+  type: "user" | "agent";
 }
 
 export interface Conversation {
-  id: string
-  messages: Message[]
-  participants: {
-    id: string
-    name: string
-    type: "user" | "agent"
-  }[]
+  id: string;
+  messages: Message[];
+  participants: Participant[];
 }
 
-interface SendMessageParams {
-  conversationId: string
-  message: Omit<Message, "id">
-}
+export function useAgentChat() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-export function useAgentChat(scenarioId: string) {
-  const [conversations, setConversations] = useState<Conversation[]>([
-    {
-      id: "default",
-      messages: [],
-      participants: [
-        {
-          id: "user1",
-          name: "User",
-          type: "user",
-        },
-        {
-          id: "agent1",
-          name: "Assistant",
-          type: "agent",
-        },
-      ],
-    },
-  ])
-  const [isSending, setIsSending] = useState(false)
-
-  const sendMessage = async ({ conversationId, message }: SendMessageParams) => {
-    setIsSending(true)
+  const sendMessage = useCallback(async (content: string) => {
+    setIsLoading(true);
     try {
       // Generate a unique ID for the message
-      const newMessage = {
-        ...message,
-        id: Math.random().toString(36).substr(2, 9),
-      }
-
-      // Update the conversation with the new message
-      setConversations((prevConversations) =>
-        prevConversations.map((conv) =>
-          conv.id === conversationId
-            ? {
-                ...conv,
-                messages: [...conv.messages, newMessage],
-              }
-            : conv
-        )
-      )
+      const newMessage: Message = {
+        id: Math.random().toString(36).substring(2, 9),
+        content,
+        sender: 'user',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, newMessage]);
 
       // Simulate agent response
       setTimeout(() => {
         const agentResponse: Message = {
-          id: Math.random().toString(36).substr(2, 9),
+          id: Math.random().toString(36).substring(2, 9),
           content: "This is a simulated agent response. The actual implementation will connect to your backend API.",
-          sender: {
-            id: "agent1",
-            name: "Assistant",
-            type: "agent",
-          },
-          timestamp: new Date().toISOString(),
-        }
-
-        setConversations((prevConversations) =>
-          prevConversations.map((conv) =>
-            conv.id === conversationId
-              ? {
-                  ...conv,
-                  messages: [...conv.messages, agentResponse],
-                }
-              : conv
-          )
-        )
-        setIsSending(false)
-      }, 1000)
+          sender: 'agent',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, agentResponse]);
+        setIsLoading(false);
+      }, 1000);
     } catch (error) {
-      console.error("Error sending message:", error)
-      setIsSending(false)
+      console.error('Failed to send message:', error);
+      setIsLoading(false);
     }
-  }
+  }, []);
 
   return {
-    conversations,
+    messages,
+    isLoading,
     sendMessage,
-    isSending,
-  }
-} 
+  };
+}
+
+export default useAgentChat; 

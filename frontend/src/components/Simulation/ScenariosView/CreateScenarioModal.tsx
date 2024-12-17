@@ -39,11 +39,11 @@ export default function CreateScenarioModal({
     description: "",
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     try {
       if (selectedTemplate) {
-        await createInstance({
+        createInstance({
           templateId: selectedTemplate.id,
           data: formData,
         })
@@ -54,8 +54,8 @@ export default function CreateScenarioModal({
           duration: 5000,
           isClosable: true,
         })
-        onClose()
       }
+      onClose()
     } catch (error) {
       toast({
         title: t('common.error'),

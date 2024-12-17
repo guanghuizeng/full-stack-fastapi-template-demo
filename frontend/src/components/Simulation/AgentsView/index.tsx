@@ -104,13 +104,14 @@ function AgentForm({ agent, onSubmit, onClose }: {
   onClose: () => void 
 }) {
   const { t } = useI18n()
-  const [formData, setFormData] = useState(agent || {
+  const [formData, setFormData] = useState<Partial<Agent>>({
     name: "",
-    type: "persona",
+    type: "persona" as const,
     description: "",
-    status: "ready",
+    status: "ready" as const,
     traits: [],
-    experience: "beginner",
+    experience: "beginner" as const,
+    ...agent
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -168,7 +169,7 @@ function AgentForm({ agent, onSubmit, onClose }: {
         <FormControl isRequired>
           <FormLabel>{t('simulation.agents.traits')}</FormLabel>
           <Input
-            value={formData.traits.join(", ")}
+            value={(formData.traits || []).join(", ")}
             onChange={(e) => setFormData({ ...formData, traits: e.target.value.split(",").map(t => t.trim()) })}
             placeholder={t('simulation.agents.traitsPlaceholder')}
           />

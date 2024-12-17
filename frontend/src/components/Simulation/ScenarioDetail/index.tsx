@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import {
   Box,
   Button,
@@ -11,7 +11,7 @@ import {
   useColorModeValue,
   Tag,
   Divider,
-  Textarea,
+  Input,
   Avatar,
   AvatarBadge,
   Progress,
@@ -26,119 +26,117 @@ import {
   FiClock,
   FiAlertCircle,
   FiSend,
-  FiUser,
-  FiUsers,
 } from "react-icons/fi"
 import { useScenarios, type ScenarioInstance } from "../../../hooks/useScenarios"
 import { useAgentChat, type Message } from "../../../hooks/useAgentChat"
+import { useI18n } from "../../../hooks/useI18n"
 
 interface ChatMessageProps {
-  message: Message
+  message: Message;
 }
 
 function ChatMessage({ message }: ChatMessageProps) {
-  const isUser = message.sender.type === "user"
-  const bg = useColorModeValue(isUser ? "blue.50" : "gray.50", isUser ? "blue.800" : "gray.700")
+  const isUser = message.sender === "user"
+  const bg = useColorModeValue(
+    isUser ? "blue.50" : "gray.50",
+    isUser ? "blue.900" : "gray.700"
+  )
   const align = isUser ? "flex-end" : "flex-start"
+  const borderRadius = isUser
+    ? "20px 20px 5px 20px"
+    : "20px 20px 20px 5px"
 
   return (
-    <Box w="100%" display="flex" justifyContent={align} mb={4}>
-      <HStack spacing={2} maxW="80%" alignItems="flex-start">
-        <Avatar
-          size="sm"
-          icon={<Icon as={isUser ? FiUser : FiUsers} />}
-          bg={isUser ? "blue.500" : "green.500"}
-          color="white"
-        >
-          <AvatarBadge boxSize="1.25em" bg={message.sender.type === "user" ? "green.500" : "blue.500"} />
+    <HStack
+      alignSelf={align}
+      spacing={2}
+      maxW="80%"
+    >
+      {!isUser && (
+        <Avatar size="sm">
+          <AvatarBadge boxSize="1.25em" bg={message.sender === "user" ? "green.500" : "blue.500"} />
         </Avatar>
-        <Box
-          bg={bg}
-          p={3}
-          borderRadius="lg"
-          maxW="100%"
-        >
-          <Text color={useColorModeValue("gray.800", "white")} fontSize="sm">
-            {message.content}
-          </Text>
-          <Text color={useColorModeValue("gray.500", "gray.300")} fontSize="xs" mt={1}>
-            {new Date(message.timestamp).toLocaleTimeString()}
-          </Text>
-        </Box>
-      </HStack>
-    </Box>
+      )}
+      <Box
+        bg={bg}
+        p={3}
+        borderRadius={borderRadius}
+        maxW="100%"
+      >
+        <Text>{message.content}</Text>
+      </Box>
+      {isUser && (
+        <Avatar size="sm">
+          <AvatarBadge boxSize="1.25em" bg="green.500" />
+        </Avatar>
+      )}
+    </HStack>
   )
 }
 
 interface ChatViewProps {
-  instance: ScenarioInstance
+  instance: ScenarioInstance;
 }
 
 function ChatView({ instance }: ChatViewProps) {
-  const [message, setMessage] = useState("")
-  const { conversations, sendMessage, isSending } = useAgentChat(instance.id)
-  const conversation = conversations[0] // For now, just use the first conversation
+  const { t } = useI18n()
+  const [input, setInput] = useState("")
+  const { messages, sendMessage, isLoading } = useAgentChat()
 
   const handleSend = () => {
-    if (!message.trim()) return
+    if (input.trim()) {
+      sendMessage(input.trim())
+      setInput("")
+    }
+  }
 
-    sendMessage({
-      conversationId: conversation.id,
-      message: {
-        content: message,
-        sender: {
-          id: "user1",
-          name: "User",
-          type: "user",
-        },
-        timestamp: new Date().toISOString(),
-      },
-    })
-    setMessage("")
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
   }
 
   return (
-    <Grid templateRows="1fr auto" height="600px" gap={4}>
-      <Box
+    <Box h="600px" display="flex" flexDirection="column">
+      <VStack
+        flex={1}
+        spacing={4}
         overflowY="auto"
+        alignItems="stretch"
         p={4}
-        borderWidth="1px"
-        borderRadius="lg"
-        bg={useColorModeValue("white", "gray.800")}
       >
-        {conversation?.messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
+        {messages.map((message) => (
+          <ChatMessage key={message.id} message={message} />
         ))}
+      </VStack>
+
+      <Box p={4} borderTop="1px" borderColor="gray.200">
+        <HStack>
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder={t('simulation.scenarios.chat.inputPlaceholder')}
+            size="lg"
+          />
+          <Button
+            colorScheme="blue"
+            onClick={handleSend}
+            isLoading={isLoading}
+            leftIcon={<Icon as={FiSend} />}
+            size="lg"
+          >
+            {t('simulation.scenarios.chat.send')}
+          </Button>
+        </HStack>
       </Box>
-      <HStack spacing={2}>
-        <Textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type your message..."
-          resize="none"
-          rows={2}
-          onKeyPress={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault()
-              handleSend()
-            }
-          }}
-        />
-        <Button
-          colorScheme="blue"
-          onClick={handleSend}
-          isLoading={isSending}
-          leftIcon={<Icon as={FiSend} />}
-        >
-          Send
-        </Button>
-      </HStack>
-    </Grid>
+    </Box>
   )
 }
 
 interface ObjectivesViewProps {
-  instance: ScenarioInstance
+  instance: ScenarioInstance;
 }
 
 function ObjectivesView({ instance }: ObjectivesViewProps) {
@@ -174,7 +172,7 @@ function ObjectivesView({ instance }: ObjectivesViewProps) {
 }
 
 interface MetricsViewProps {
-  instance: ScenarioInstance
+  instance: ScenarioInstance;
 }
 
 function MetricsView({ instance }: MetricsViewProps) {

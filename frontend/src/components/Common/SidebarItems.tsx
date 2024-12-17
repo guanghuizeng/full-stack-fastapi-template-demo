@@ -7,7 +7,7 @@ import { useI18n } from "../../hooks/useI18n"
 import type { UserPublic } from "../../client"
 
 const SidebarItems = ({ onClose }: { onClose?: () => void }) => {
-  const { t, locale, changeLocale } = useI18n()
+  const { t, language, setLanguage } = useI18n()
   const queryClient = useQueryClient()
   const textColor = useColorModeValue("ui.main", "ui.light")
   const bgActive = useColorModeValue("#E2E8F0", "#4A5568")
@@ -59,11 +59,11 @@ const SidebarItems = ({ onClose }: { onClose?: () => void }) => {
             w="100%"
             justifyContent="flex-start"
           >
-            {locale === 'zh-CN' ? '中文' : 'English'}
+            {language === 'zh-CN' ? '中文' : 'English'}
           </MenuButton>
           <MenuList>
-            <MenuItem onClick={() => changeLocale('zh-CN')}>中文</MenuItem>
-            <MenuItem onClick={() => changeLocale('en-US')}>English</MenuItem>
+            <MenuItem onClick={() => setLanguage('zh-CN')}>中文</MenuItem>
+            <MenuItem onClick={() => setLanguage('en-US')}>English</MenuItem>
           </MenuList>
         </Menu>
       </Box>

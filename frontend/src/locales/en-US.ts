@@ -36,7 +36,6 @@ export default {
       type: "Type",
       description: "Description",
       descriptionPlaceholder: "Enter scenario description",
-      status: "Status",
       progress: "Progress",
       successRate: "Success Rate",
       tasks: "Tasks",
@@ -49,7 +48,7 @@ export default {
         collaboration: "Collaboration",
         all: "All Types"
       },
-      status: {
+      scenarioStatus: {
         active: "Active",
         completed: "Completed",
         failed: "Failed",
@@ -65,7 +64,6 @@ export default {
       type: "Type",
       description: "Description",
       descriptionPlaceholder: "Enter agent description",
-      status: "Status",
       experience: "Experience Level",
       traits: "Traits",
       traitsPlaceholder: "Enter agent traits, separated by commas",
@@ -76,7 +74,7 @@ export default {
         service: "Service",
         analyst: "Analyst"
       },
-      status: {
+      agentStatus: {
         active: "Active",
         ready: "Ready",
         training: "Training",
@@ -94,7 +92,6 @@ export default {
       createWorld: "Create World",
       configureWorld: "Configure World",
       configure: "Configure",
-      status: "Status",
       complexity: "Complexity",
       agentCount: "Agent Count",
       resourceUsage: "Resource Usage",
@@ -111,7 +108,7 @@ export default {
         medium: "Medium",
         high: "High"
       },
-      status: {
+      worldStatus: {
         active: "Active",
         standby: "Standby",
         configuring: "Configuring",

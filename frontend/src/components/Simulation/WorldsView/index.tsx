@@ -159,17 +159,32 @@ function WorldForm({ world, onSubmit, onClose }: {
   onClose: () => void 
 }) {
   const { t } = useI18n()
-  const [formData, setFormData] = useState(world || {
+  const [formData, setFormData] = useState<Partial<World>>({
     name: "",
     description: "",
-    complexity: "medium",
+    complexity: "medium" as const,
     settings: {
       maxAgents: 10,
       timeScale: 1.0,
       environment: "default",
       constraints: [],
     },
+    ...world
   })
+
+  const handleSettingsChange = (key: keyof World['settings'], value: any) => {
+    setFormData({
+      ...formData,
+      settings: {
+        maxAgents: 10,
+        timeScale: 1.0,
+        environment: "default",
+        constraints: [],
+        ...(formData.settings || {}),
+        [key]: value
+      }
+    })
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -214,10 +229,7 @@ function WorldForm({ world, onSubmit, onClose }: {
           <FormLabel>{t('simulation.worlds.maxAgents')}</FormLabel>
           <NumberInput
             value={formData.settings?.maxAgents}
-            onChange={(_, value) => setFormData({
-              ...formData,
-              settings: { ...formData.settings!, maxAgents: value },
-            })}
+            onChange={(_, value) => handleSettingsChange('maxAgents', value)}
             min={1}
             max={100}
           >
@@ -233,10 +245,7 @@ function WorldForm({ world, onSubmit, onClose }: {
           <FormLabel>{t('simulation.worlds.timeScale')}</FormLabel>
           <NumberInput
             value={formData.settings?.timeScale}
-            onChange={(_, value) => setFormData({
-              ...formData,
-              settings: { ...formData.settings!, timeScale: value },
-            })}
+            onChange={(_, value) => handleSettingsChange('timeScale', value)}
             min={0.1}
             max={10}
             step={0.1}
@@ -253,10 +262,7 @@ function WorldForm({ world, onSubmit, onClose }: {
           <FormLabel>{t('simulation.worlds.environment')}</FormLabel>
           <Input
             value={formData.settings?.environment}
-            onChange={(e) => setFormData({
-              ...formData,
-              settings: { ...formData.settings!, environment: e.target.value },
-            })}
+            onChange={(e) => handleSettingsChange('environment', e.target.value)}
             placeholder={t('simulation.worlds.environmentPlaceholder')}
           />
         </FormControl>
@@ -264,14 +270,8 @@ function WorldForm({ world, onSubmit, onClose }: {
         <FormControl>
           <FormLabel>{t('simulation.worlds.constraints')}</FormLabel>
           <Input
-            value={formData.settings?.constraints.join(", ")}
-            onChange={(e) => setFormData({
-              ...formData,
-              settings: {
-                ...formData.settings!,
-                constraints: e.target.value.split(",").map(c => c.trim()),
-              },
-            })}
+            value={(formData.settings?.constraints || []).join(", ")}
+            onChange={(e) => handleSettingsChange('constraints', e.target.value.split(",").map(c => c.trim()))}
             placeholder={t('simulation.worlds.constraintsPlaceholder')}
           />
         </FormControl>
