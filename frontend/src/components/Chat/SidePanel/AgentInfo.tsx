@@ -1,13 +1,15 @@
 import React from "react"
 import {
-  Avatar,
   Box,
+  Circle,
   Flex,
   Heading,
   Tag,
   Text,
+  Icon,
   useColorModeValue,
 } from "@chakra-ui/react"
+import { FiCpu } from "react-icons/fi"
 import { useI18n } from "../../../hooks/useI18n"
 
 // TODO: Replace with actual agent data from context/store
@@ -23,14 +25,31 @@ const mockAgent = {
 const AgentInfo: React.FC = () => {
   const { t } = useI18n()
   const statusColor = mockAgent.status === "online" ? "green" : "gray"
+  const agentAvatarBg = useColorModeValue("teal.500", "teal.400")
+  const iconColor = useColorModeValue("white", "gray.800")
 
   return (
     <Flex gap={4} align="center">
-      <Avatar
-        size="lg"
-        name={mockAgent.name}
-        src={mockAgent.avatar}
-      />
+      <Circle
+        size="48px"
+        bg={agentAvatarBg}
+        position="relative"
+      >
+        <Icon
+          as={FiCpu}
+          color={iconColor}
+          boxSize="24px"
+        />
+        <Circle
+          size="12px"
+          bg={`${statusColor}.500`}
+          border="2px solid"
+          borderColor={useColorModeValue("white", "gray.800")}
+          position="absolute"
+          bottom="0"
+          right="0"
+        />
+      </Circle>
       
       <Box flex="1">
         <Heading size="sm" mb={1}>

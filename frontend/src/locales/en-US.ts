@@ -30,6 +30,23 @@ export default {
   chat: {
     title: "AI Chat",
     description: "Interact with AI assistants using natural language",
+    greeting: {
+      welcome: "Welcome to AI Assistant",
+      introduction: "I'm your AI assistant, specialized in solving various challenges. As a professional AI assistant, I have the following characteristics:",
+      persona: {
+        traits: {
+          0: "Expertise: Skilled in technical analysis, problem diagnosis, and solution design",
+          1: "Interaction Style: Friendly, professional, and detail-oriented",
+          2: "Work Approach: Structured thinking, clear logic"
+        }
+      },
+      suggestions: {
+        title: "You can ask me about:",
+        item1: "Help analyze a technical issue or business scenario",
+        item2: "Provide professional advice and best practices",
+        item3: "Assist with solution design and decision making"
+      }
+    },
   },
   simulation: {
     title: "AI Simulation",

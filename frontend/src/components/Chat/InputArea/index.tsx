@@ -9,19 +9,14 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Portal,
   Textarea,
   Tooltip,
   useColorModeValue,
-  useDisclosure,
 } from "@chakra-ui/react"
 import {
   FiCode,
-  FiImage,
   FiPaperclip,
   FiSend,
-  FiSmile,
-  FiType,
 } from "react-icons/fi"
 import { useI18n } from "../../../hooks/useI18n"
 import Toolbar from "./Toolbar"
@@ -39,31 +34,26 @@ const InputArea: React.FC<InputAreaProps> = ({
 }) => {
   const { t } = useI18n()
   const [message, setMessage] = useState("")
-  const [isMarkdown, setIsMarkdown] = useState(false)
   const [isCodeMode, setIsCodeMode] = useState(false)
   const [language, setLanguage] = useState("typescript")
   const fileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const bg = useColorModeValue("white", "gray.800")
   const borderColor = useColorModeValue("gray.200", "gray.700")
-  const { isOpen: isEmojiOpen, onToggle: onEmojiToggle } = useDisclosure()
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Ctrl/Cmd + Enter to send
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
       e.preventDefault()
       handleSubmit()
       return
     }
 
-    // Tab key for indentation in code mode
     if (isCodeMode && e.key === "Tab") {
       e.preventDefault()
       const start = e.currentTarget.selectionStart
       const end = e.currentTarget.selectionEnd
       const newMessage = message.substring(0, start) + "  " + message.substring(end)
       setMessage(newMessage)
-      // Move cursor after indentation
       setTimeout(() => {
         if (textareaRef.current) {
           textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2
@@ -115,27 +105,24 @@ const InputArea: React.FC<InputAreaProps> = ({
     }
   }
 
-  const insertText = useCallback((text: string) => {
-    const textarea = textareaRef.current
-    if (!textarea) return
-
-    const start = textarea.selectionStart
-    const end = textarea.selectionEnd
-    const newMessage = message.substring(0, start) + text + message.substring(end)
-    setMessage(newMessage)
-
-    // Move cursor after inserted text
-    setTimeout(() => {
-      textarea.selectionStart = textarea.selectionEnd = start + text.length
-      textarea.focus()
-    }, 0)
-  }, [message])
-
   const toggleCodeMode = () => {
     setIsCodeMode(!isCodeMode)
     if (!isCodeMode) {
-      insertText("\`\`\`" + language + "\n\n\`\`\`")
+      setMessage("```" + language + "\n\n```")
+      setTimeout(() => {
+        if (textareaRef.current) {
+          const pos = textareaRef.current.value.indexOf('\n') + 1
+          textareaRef.current.selectionStart = textareaRef.current.selectionEnd = pos
+          textareaRef.current.focus()
+        }
+      }, 0)
     }
+  }
+
+  const handleLanguageChange = (lang: string) => {
+    setLanguage(lang)
+    const code = message.split('\n').slice(1, -1).join('\n')
+    setMessage("```" + lang + "\n" + code + "\n```")
   }
 
   return (
@@ -148,7 +135,10 @@ const InputArea: React.FC<InputAreaProps> = ({
       <Flex direction="column" gap={2}>
         <Toolbar
           onInsertCode={toggleCodeMode}
-          onClear={() => setMessage("")}
+          onClear={() => {
+            setMessage("")
+            setIsCodeMode(false)
+          }}
         />
         
         <Flex gap={2}>
@@ -176,6 +166,7 @@ const InputArea: React.FC<InputAreaProps> = ({
                   top={2}
                   right={2}
                   variant="ghost"
+                  color="gray.300"
                 >
                   {language}
                 </MenuButton>
@@ -183,7 +174,7 @@ const InputArea: React.FC<InputAreaProps> = ({
                   {["typescript", "javascript", "python", "java", "go", "rust"].map((lang) => (
                     <MenuItem
                       key={lang}
-                      onClick={() => setLanguage(lang)}
+                      onClick={() => handleLanguageChange(lang)}
                     >
                       {lang}
                     </MenuItem>
@@ -194,15 +185,6 @@ const InputArea: React.FC<InputAreaProps> = ({
           </Box>
           
           <Flex direction="column" gap={2}>
-            <Tooltip label={t('chat.toolbar.emoji')}>
-              <IconButton
-                aria-label={t('chat.toolbar.emoji')}
-                icon={<FiSmile />}
-                variant="ghost"
-                onClick={onEmojiToggle}
-              />
-            </Tooltip>
-
             <Tooltip label={t('chat.toolbar.upload')}>
               <IconButton
                 aria-label={t('chat.toolbar.upload')}
@@ -230,22 +212,6 @@ const InputArea: React.FC<InputAreaProps> = ({
         onChange={handleFileSelect}
         display="none"
       />
-
-      {isEmojiOpen && (
-        <Portal>
-          <Box
-            position="fixed"
-            bottom="100px"
-            right="100px"
-            bg={bg}
-            boxShadow="lg"
-            borderRadius="md"
-            p={4}
-          >
-            {/* TODO: Add emoji picker component */}
-          </Box>
-        </Portal>
-      )}
     </Box>
   )
 }

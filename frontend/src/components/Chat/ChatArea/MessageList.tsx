@@ -1,9 +1,7 @@
 import React from "react"
 import {
-  Avatar,
   Box,
-  Button,
-  Code,
+  Circle,
   Flex,
   IconButton,
   Image,
@@ -12,27 +10,14 @@ import {
   MenuItem,
   MenuList,
   Text,
-  Tooltip,
   useColorModeValue,
+  Icon,
 } from "@chakra-ui/react"
 import { useI18n } from "../../../hooks/useI18n"
-import { FiCopy, FiEdit2, FiMoreHorizontal, FiRepeat } from "react-icons/fi"
-
-export interface Message {
-  id: string
-  content: string
-  type: 'text' | 'code' | 'image'
-  language?: string // For code blocks
-  sender: {
-    id: string
-    name: string
-    avatar?: string
-    isAgent?: boolean
-  }
-  timestamp: string
-  status?: 'sending' | 'sent' | 'error' | 'read'
-  replyTo?: Message
-}
+import { FiCopy, FiEdit2, FiMoreHorizontal, FiRepeat, FiUser, FiCpu } from "react-icons/fi"
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import type { Message } from "../../../hooks/useAgentChat"
 
 interface MessageGroupProps {
   date: string
@@ -45,31 +30,39 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ date, messages, onAction })
   const userBg = useColorModeValue("blue.50", "blue.900")
   const agentBg = useColorModeValue("gray.50", "gray.700")
   const codeBg = useColorModeValue("gray.50", "gray.800")
+  const userAvatarBg = useColorModeValue("blue.500", "blue.400")
+  const agentAvatarBg = useColorModeValue("teal.500", "teal.400")
+  const iconColor = useColorModeValue("white", "gray.800")
 
   const renderContent = (message: Message) => {
     switch (message.type) {
       case 'code':
         return (
           <Box position="relative">
-            <Code
-              display="block"
-              whiteSpace="pre"
-              p={4}
-              borderRadius="md"
-              bg={codeBg}
-              overflowX="auto"
-            >
-              {message.content}
-            </Code>
-            <IconButton
-              aria-label={t('chat.messageActions.copy')}
-              icon={<FiCopy />}
-              size="sm"
+            <Box
               position="absolute"
               top={2}
               right={2}
-              onClick={() => onAction('copy', message)}
-            />
+              zIndex={1}
+            >
+              <IconButton
+                aria-label={t('chat.messageActions.copy')}
+                icon={<FiCopy />}
+                size="sm"
+                onClick={() => onAction('copy', message)}
+              />
+            </Box>
+            <SyntaxHighlighter
+              language={message.language || 'typescript'}
+              style={tomorrow}
+              customStyle={{
+                margin: 0,
+                borderRadius: '0.375rem',
+                padding: '1rem',
+              }}
+            >
+              {message.content}
+            </SyntaxHighlighter>
           </Box>
         )
       case 'image':
@@ -82,7 +75,11 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ date, messages, onAction })
           />
         )
       default:
-        return <Text>{message.content}</Text>
+        return (
+          <Text whiteSpace="pre-wrap">
+            {message.content}
+          </Text>
+        )
     }
   }
 
@@ -103,13 +100,28 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ date, messages, onAction })
           mb={4}
           flexDirection={message.sender.isAgent ? "row" : "row-reverse"}
         >
-          <Avatar
-            size="sm"
-            name={message.sender.name}
-            src={message.sender.avatar}
+          <Circle
+            size="40px"
+            bg={message.sender.isAgent ? agentAvatarBg : userAvatarBg}
             mr={message.sender.isAgent ? 2 : 0}
             ml={message.sender.isAgent ? 0 : 2}
-          />
+            position="relative"
+          >
+            <Icon
+              as={message.sender.isAgent ? FiCpu : FiUser}
+              color={iconColor}
+              boxSize="20px"
+            />
+            <Circle
+              size="12px"
+              bg={message.sender.isAgent ? "green.500" : "blue.500"}
+              border="2px solid"
+              borderColor={useColorModeValue("white", "gray.800")}
+              position="absolute"
+              bottom="0"
+              right="0"
+            />
+          </Circle>
           
           <Box maxW="70%">
             {message.replyTo && (
@@ -177,7 +189,7 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ date, messages, onAction })
               {renderContent(message)}
 
               <Text fontSize="xs" color="gray.500" textAlign="right" mt={1}>
-                {message.timestamp}
+                {new Date(message.timestamp).toLocaleTimeString()}
                 {message.status && (
                   <Text as="span" ml={2}>
                     · {t(`chat.status.${message.status}`)}

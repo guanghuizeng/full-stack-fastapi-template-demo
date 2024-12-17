@@ -44,6 +44,23 @@ export default {
     inputPlaceholder: "输入消息...",
     noMessages: "暂无消息",
     loadMore: "加载更多",
+    greeting: {
+      welcome: "欢迎使用AI助手",
+      introduction: "我是您的智能助手，专注于帮助您解决各类问题。作为一个专业的AI助手，我具备以下特点：",
+      persona: {
+        traits: {
+          0: "专业知识：擅长技术分析、问题诊断和解决方案设计",
+          1: "交互风格：友好、专业、注重细节",
+          2: "工作方式：结构化思维，逻辑清晰"
+        }
+      },
+      suggestions: {
+        title: "您可以这样问我：",
+        item1: "帮我分析一个技术问题或业务场景",
+        item2: "为我提供专业的建议和最佳实践",
+        item3: "协助我进行方案设计和决策"
+      }
+    },
     messageActions: {
       copy: "复制",
       quote: "引用",
@@ -130,10 +147,10 @@ export default {
       bio: "个人简介",
       bioPlaceholder: "请输入个人简介",
       updateSuccess: "个人信息更新成功",
-      updateError: "个人信��更新失败",
+      updateError: "个人信息更���失败",
       deleteSuccess: "账号已成功删除",
       deleteConfirmTitle: "确认删除账号",
-      deleteConfirmMessage: "您的所有账号数据将被永久删除。如果确定，请点击\"确认\"继续。此操作无法撤销。"
+      deleteConfirmMessage: "您的所有账号数据将被永久删除。如果确定，请点击\"确认\"继续此操作无法撤销。"
     },
     preferences: {
       title: "偏好设置",
@@ -262,7 +279,7 @@ export default {
       createScenario: "新建对话",
       createFromTemplate: "基于 {{name}} 模板创建",
       createSuccess: "对话创建成功",
-      createError: "对话创建失败，请重试",
+      createError: "对话创��失败，请重试",
       name: "名称",
       namePlaceholder: "请输入对话名称",
       type: "类型",
